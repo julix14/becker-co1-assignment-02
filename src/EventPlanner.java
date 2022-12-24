@@ -1,8 +1,18 @@
-import data.Location;
-import data.event.Event;
+import classes.Location;
+import classes.event.Event;
 
 public class EventPlanner {
     private Location[] locations;
+    private final String[] FUNCTIONS = {
+            "Create new event",
+            "Show a report of all events",
+            "Search events by title",
+            "Search events by location",
+            "Show all events on particular date",
+            "Show the most used location",
+            "Show the least used location",
+    };
+
     public EventPlanner(int locationCount){
         locations = new Location[locationCount];
     }

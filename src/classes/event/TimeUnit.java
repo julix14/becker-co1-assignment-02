@@ -1,4 +1,4 @@
-package data.event;
+package classes.event;
 
 public enum TimeUnit {
     HOUR,

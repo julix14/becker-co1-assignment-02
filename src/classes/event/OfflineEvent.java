@@ -1,6 +1,6 @@
-package data.event;
+package classes.event;
 
-import data.Location;
+import classes.Location;
 
 import java.time.LocalDateTime;
 

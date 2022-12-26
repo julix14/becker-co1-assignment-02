@@ -159,6 +159,9 @@ public class EventPlanner {
     }
 
     private void printEvents(Event[] events){
+        for (Event event : events) {
+            System.out.printf("- %s", event.getTitle());
+        }
 
     }
 

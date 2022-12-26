@@ -138,10 +138,23 @@ public class EventPlanner {
     }
 
     private void showMostUsedLocation(){
-
+        Location mostUsedLocation = locations[0];
+        for (Location location : locations) {
+            if (location.getEvents().length > mostUsedLocation.getEvents().length){
+                mostUsedLocation = location;
+            }
+        }
+        System.out.printf("%nThe most used location is %s with %d events.%n", mostUsedLocation.getName(), mostUsedLocation.getEvents().length);
     }
 
     private void showLeastUsedLocation(){
+        Location leastUsedLocation = locations[0];
+        for (Location location : locations) {
+            if (location.getEvents().length < leastUsedLocation.getEvents().length){
+                leastUsedLocation = location;
+            }
+        }
+        System.out.printf("%nThe least used location is %s with %d events.%n", leastUsedLocation.getName(), leastUsedLocation.getEvents().length);
 
     }
 

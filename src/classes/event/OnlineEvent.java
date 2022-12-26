@@ -4,12 +4,12 @@ import classes.Location;
 
 import java.time.LocalDateTime;
 
-public class OfflineEvent extends Event {
+public class OnlineEvent extends Event {
     private final Location LOCATION;
 
-    public OfflineEvent(int ID, String title, LocalDateTime start, double length, TimeUnit timeUnit, String[] participants) {
+    public OnlineEvent(int ID, String title, LocalDateTime start, double length, TimeUnit timeUnit, String[] participants, Location location) {
         super(ID, title, start, length, timeUnit, participants);
-        this.LOCATION = new Location("Online", -1);
+        this.LOCATION = location;
     }
 
     public Location getLocation() {

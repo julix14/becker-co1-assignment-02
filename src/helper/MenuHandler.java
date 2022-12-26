@@ -19,5 +19,6 @@ public class MenuHandler {
 
     private int selectMenuItem(){
         System.out.println();
+        return 0;
     }
 }

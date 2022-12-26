@@ -120,7 +120,17 @@ public class EventPlanner {
     }
 
     private Event[] getEventsByName(){
-        return null;
+        String searchedName = userInputService.getStringFromUserWithMessage("Please enter the name of the searched event: ").toLowerCase();
+        Event[] allEvents = getAllEvents();
+        Event[] selectedEvents = new Event[0];
+        for (Event event : allEvents) {
+            if (event.getTitle().toLowerCase().contains(searchedName)){
+                ArrayHelper.add(selectedEvents, event);
+            }
+
+        }
+
+        return selectedEvents;
     }
 
     private Event[] getEventsByLocation(){

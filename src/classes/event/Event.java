@@ -62,4 +62,5 @@ public class Event {
     public void setParticipants(String[] participants) {
         this.participants = participants;
     }
+
 }

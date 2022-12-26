@@ -3,6 +3,7 @@ import classes.event.Event;
 import classes.event.OnlineEvent;
 import classes.event.OnsiteEvent;
 import classes.event.TimeUnit;
+import helper.ArrayHelper;
 import helper.input.UserInputService;
 import helper.validation.ValidationService;
 
@@ -109,7 +110,13 @@ public class EventPlanner {
     }
 
     private Event[] getAllEvents(){
-        return null;
+        Event[] allEvents = new Event[0];
+        for (Location location : locations) {
+            for (Event event : location.getEvents()) {
+                ArrayHelper.add(allEvents, event);
+            }
+        }
+        return allEvents;
     }
 
     private Event[] getEventsByName(){

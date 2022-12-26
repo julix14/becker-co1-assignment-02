@@ -37,6 +37,10 @@ public class Location {
     public void addEvent(Event event){
         ArrayHelper.add(this.events, event);
     }
+
+    public Event[] getEvents(){
+       return this.events;
+    }
     public String getName() {
         return name;
     }

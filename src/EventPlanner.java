@@ -71,11 +71,14 @@ public class EventPlanner {
         Location location = locations[locationPlace-1];
 
         // Check if location is available
-        boolean locationAvailable = location.eventsWhileDuration(startDate, length, timeUnit).length == 0;
-        // Disable Check if Online Event
+        // Disable Check if Online Event#
+        boolean locationAvailable;
         if (location.getName().equals("Online")){
             locationAvailable = true;
+        } else {
+            locationAvailable = location.eventsWhileDuration(startDate, length, timeUnit).length == 0;
         }
+
         while(!locationAvailable){
             System.out.println("The location is not available at this time. Please select another location:");
             for (int i = 0; i < locations.length; i++) {

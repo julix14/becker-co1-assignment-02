@@ -1,12 +1,11 @@
-import java.util.Scanner;
+import helper.validation.ValidationService;
 
 public class Starter {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        ValidationService validationService = new ValidationService();
 
         System.out.println("Hello on the event planner!");
-        System.out.print("For how many locations do you want to plan events? ");
-        int locationCount = scanner.nextInt();
+        int locationCount = validationService.validateInputIsInt("For how many locations do you want to plan events? ");
 
         new EventPlanner(locationCount).runPlanner();
     }

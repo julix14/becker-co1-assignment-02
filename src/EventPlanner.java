@@ -1,5 +1,7 @@
 import classes.Location;
 import classes.event.Event;
+import helper.input.UserInputService;
+import helper.validation.ValidationService;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -15,8 +17,8 @@ public class EventPlanner {
             "Show the most used location",
             "Show the least used location",
     };
-
-    private final Scanner scanner = new Scanner(System.in);
+    UserInputService userInputService = new UserInputService();
+    ValidationService validationService = new ValidationService();
 
     public EventPlanner(int locationCount){
         locations = new Location[locationCount];
@@ -32,10 +34,8 @@ public class EventPlanner {
     private Location[] setupLocations(){
         System.out.printf("%nPlease enter the name and max capacity of %d locations:", this.locations.length);
         for (int i = 0; i < locations.length; i++) {
-            System.out.printf("%nPlease enter the name of location %d: ", i+1);
-            String name = scanner.next();
-            System.out.printf("Please enter the maximum capacity of location %d: ", i+1);
-            int maxCapacity = scanner.nextInt();
+            String name = userInputService.getStringFromUserWithMessage(String.format("%nPlease enter the name of location %d: ", i+1));
+            int maxCapacity = validationService.validateInputIsInt(String.format("Please enter the max. capacity of %s: ", name));
             locations[i] = new Location(name, maxCapacity);
         }
         return locations;

@@ -12,10 +12,12 @@ public class MenuHandler {
     }
 
     private void printMenu() {
-
+        for (int i = 0; i < MENUITEMS.length; i++) {
+            System.out.printf("[%d] - %s%n", i + 1, MENUITEMS[i]);
+        }
     }
 
     private int selectMenuItem(){
-        return 0;
+        System.out.println();
     }
 }

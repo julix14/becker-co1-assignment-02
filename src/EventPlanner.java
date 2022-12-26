@@ -65,11 +65,7 @@ public class EventPlanner {
 
         // Select Location of new Event
         System.out.println("Please select the location of the event:");
-        for (int i = 0; i < locations.length; i++) {
-            System.out.printf("%d: %s%n", i+1, locations[i].getName());
-        }
-        int locationPlace = validationService.validateInputIsInRange("Please enter the number of the location: ", 1, locations.length);
-        Location location = locations[locationPlace-1];
+        Location location = locationSelector();
 
         // Check if location is available
         // Disable Check if Online Event#
@@ -82,11 +78,7 @@ public class EventPlanner {
 
         while(!locationAvailable){
             System.out.println("The location is not available at this time. Please select another location:");
-            for (int i = 0; i < locations.length; i++) {
-                System.out.printf("%d: %s%n", i+1, locations[i].getName());
-            }
-            locationPlace = validationService.validateInputIsInRange("Please enter the number of the location: ", 1, locations.length);
-            location = locations[locationPlace-1];
+            location = locationSelector();
             locationAvailable = location.eventsWhileDuration(startDate, length, timeUnit).length == 0;
         }
 
@@ -127,14 +119,13 @@ public class EventPlanner {
             if (event.getTitle().toLowerCase().contains(searchedName)){
                 ArrayHelper.add(selectedEvents, event);
             }
-
         }
-
         return selectedEvents;
     }
 
     private Event[] getEventsByLocation(){
-        return null;
+        Location location = locationSelector();
+        return location.getEvents();
     }
 
     private Event[] getEventsByDate(){
@@ -153,11 +144,12 @@ public class EventPlanner {
 
     }
 
-    private Event[] addEventToArray(Event[] events, Event event){
-        Event[] temp = new Event[events.length + 1];
-        System.arraycopy(events, 0, temp, 0, events.length);
-        temp[events.length] = event;
-        return temp;
+    private Location locationSelector(){
+        for (int i = 0; i < locations.length; i++) {
+            System.out.printf("%d: %s%n", i+1, locations[i].getName());
+        }
+        int locationPlace = validationService.validateInputIsInRange("Please enter the number of the location: ", 1, locations.length);
+        return locations[locationPlace-1];
     }
 
 }

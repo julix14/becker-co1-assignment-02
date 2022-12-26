@@ -129,7 +129,12 @@ public class EventPlanner {
     }
 
     private Event[] getEventsByDate(){
-        return null;
+        LocalDateTime searchedDate = validationService.validateInputIsLocalDateTime("Please enter the date of the searched events: (DD.MM.YYYY HH:mm)");
+        Event[] allEvents = new Event[0];
+        for (Location location : locations) {
+            ArrayHelper.addAll(location.eventsWhileDuration(searchedDate, 1, TimeUnit.DAY), allEvents);
+        }
+        return allEvents;
     }
 
     private void showMostUsedLocation(){

@@ -11,9 +11,18 @@ public class ArrayHelper {
         return newArray;
     }
 
+    public static Event[] addAll(Event[] array, Event[] objects){
+        Event[] newArray = copyAndGrowByN(array, objects.length);
+        System.arraycopy(objects, 0, newArray, array.length, objects.length);
+        return newArray;
+    }
+
+    private static Event[] copyAndGrowByN(Event[] array, int length) {
+        return Arrays.copyOf(array, array.length + length);
+    }
+
     public static Event[] copyAndGrowBy1(Event[] array){
-        Event[] newArray = new Event[array.length + 1];
-        System.arraycopy(array, 0, newArray, 0, array.length);
+        Event[] newArray = Arrays.copyOf(array, array.length + 1);;
         return newArray;
     }
 }

@@ -23,6 +23,7 @@ public class EventPlanner {
 
     private Location[] setupLocations(int locationCount){
         System.out.printf("%nPlease enter the name and max capacity of %d locations:", locationCount - 1);
+        this.locations = new Location[locationCount];
         for (int i = 0; i < locationCount - 1; i++) {
             String name = userInputService.getStringFromUserWithMessage(String.format("%nPlease enter the name of location %d: ", i+1));
             int maxCapacity = validationService.validateInputIsInt(String.format("Please enter the max. capacity of %s: ", name));
@@ -139,16 +140,20 @@ public class EventPlanner {
     private Event[] getAllEvents(){
         Event[] allEvents = new Event[0];
         for (Location location : locations) {
-            for (Event event : location.getEvents()) {
-                ArrayHelper.add(allEvents, event);
+            if (location.getEvents().length > 0){
+                ArrayHelper.addAll(location.getEvents(), allEvents);
             }
         }
         return allEvents;
     }
 
     private void printEvents(Event[] events){
-        for (Event event : events) {
-            System.out.printf("- %s", event.getTitle());
+        if (events.length == 0){
+            System.out.println("No events found.");
+        } else {
+            for (Event event : events) {
+                System.out.printf("- %s", event.getTitle());
+            }
         }
 
     }

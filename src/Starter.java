@@ -1,3 +1,5 @@
+import classes.EventPlanner;
+import classes.MenuHandler;
 import helper.validation.ValidationService;
 
 public class Starter {
@@ -7,7 +9,7 @@ public class Starter {
         System.out.println("Hello on the event planner!");
         int locationCount = validationService.validateInputIsInt("For how many locations do you want to plan events? ");
 
-        new EventPlanner(locationCount).runPlanner();
+        new MenuHandler(new EventPlanner(locationCount)).runMenu();
     }
 
 

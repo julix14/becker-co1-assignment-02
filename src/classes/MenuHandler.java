@@ -12,9 +12,9 @@ public class MenuHandler {
             "Show the most used location",
             "Show the least used location",
     };
-    ValidationService validationService = new ValidationService();
+    private final ValidationService validationService = new ValidationService();
 
-    EventPlanner eventPlanner;
+    private final EventPlanner eventPlanner;
 
     public MenuHandler(EventPlanner eventPlanner) {
         this.eventPlanner = eventPlanner;

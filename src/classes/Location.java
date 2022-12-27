@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class Location {
     private String name;
     private int maxCapacity;
-    private Event[] events;
+    private Event[] events = new Event[0];
 
     public Location(String name, int maxCapacity){
         this.name = name;
@@ -24,18 +24,19 @@ public class Location {
             case DAY -> date.plusDays((long) Math.ceil(length));
             case MONTH -> date.plusMonths((long) Math.ceil(length));
         };
-        Event[] eventsWhileDuration = new Event[events.length];
-        for (int i = 0; i < events.length; i++) {
-            if (!(events[i].getStart().isBefore(date) && EventHelperService.getEndOfEvent(events[i]).isBefore(endDate)) ||
-                    (events[i].getStart().isAfter(date) && EventHelperService.getEndOfEvent(events[i]).isAfter(endDate))) {
-                eventsWhileDuration[i] = events[i];
+        Event[] eventsWhileDuration = new Event[0];
+
+        for (Event event : this.events) {
+            if (!(event.getStart().isBefore(date) && EventHelperService.getEndOfEvent(event).isBefore(endDate)) ||
+                    (event.getStart().isAfter(date) && EventHelperService.getEndOfEvent(event).isAfter(endDate))) {
+                ArrayHelper.add(eventsWhileDuration, event);
             }
         }
         return eventsWhileDuration;
     }
 
     public void addEvent(Event event){
-        ArrayHelper.add(this.events, event);
+        events = ArrayHelper.add(this.events, event);
     }
 
     public Event[] getEvents(){

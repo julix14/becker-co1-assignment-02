@@ -64,7 +64,11 @@ public class EventPlanner {
         while(!locationAvailable){
             System.out.println("The location is not available at this time. Please select another location:");
             location = locationSelector();
-            locationAvailable = location.eventsWhileDuration(startDate, length, timeUnit).length == 0;
+            if (location.getName().equals("Online")){
+                locationAvailable = true;
+            } else {
+                locationAvailable = location.eventsWhileDuration(startDate, length, timeUnit).length == 0;
+            }
         }
 
         // Add participants
@@ -75,19 +79,19 @@ public class EventPlanner {
         }
 
         // Create Event and add to location
+        Event event;
         if (location.getName().equals("Online")){
-            Event event = new OnlineEvent(eventCount, name, startDate, length, timeUnit, participants, location);
-            location.addEvent(event);
+            event = new OnlineEvent(eventCount, name, startDate, length, timeUnit, participants, location);
 
         } else {
-            Event event = new OnsiteEvent(eventCount, name, startDate, length, timeUnit, participants, location);
-            location.addEvent(event);
-
+            event = new OnsiteEvent(eventCount, name, startDate, length, timeUnit, participants, location);
         }
+        location.addEvent(event);
     }
     public void printAllEvents(){
         Event[] allEvents = getAllEvents();
         printEvents(allEvents);
+        System.out.println();
     }
 
     public void getEventsByTitle(){
@@ -140,8 +144,8 @@ public class EventPlanner {
     private Event[] getAllEvents(){
         Event[] allEvents = new Event[0];
         for (Location location : locations) {
-            if (location.getEvents().length > 0){
-                ArrayHelper.addAll(location.getEvents(), allEvents);
+            if (location.getEvents() != null && location.getEvents().length > 0){
+                allEvents = ArrayHelper.addAll(location.getEvents(), allEvents);
             }
         }
         return allEvents;

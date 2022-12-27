@@ -27,9 +27,8 @@ public class Location {
         Event[] eventsWhileDuration = new Event[0];
 
         for (Event event : this.events) {
-            if (!(event.getStart().isBefore(date) && EventHelperService.getEndOfEvent(event).isBefore(endDate)) ||
-                    (event.getStart().isAfter(date) && EventHelperService.getEndOfEvent(event).isAfter(endDate))) {
-                ArrayHelper.add(eventsWhileDuration, event);
+            if (!(EventHelperService.getEndOfEvent(event).isBefore(date) || (event.getStart().isAfter(endDate)))) {
+                eventsWhileDuration = ArrayHelper.add(eventsWhileDuration, event);
             }
         }
         return eventsWhileDuration;

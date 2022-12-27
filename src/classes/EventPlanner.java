@@ -140,7 +140,7 @@ public class EventPlanner {
     }
 
     public void getEventsByDate(){
-        LocalDate searchedDate = validationService.validateInputIsLocalDate("Please enter the date of the searched events: (DD.MM.YYYY HH:mm)");
+        LocalDate searchedDate = validationService.validateInputIsLocalDate("Please enter the date of the searched events: (DD.MM.YYYY)");
         Event[] allEvents = new Event[0];
         for (Location location : locations) {
             allEvents = ArrayHelper.addAll(location.eventsWhileDuration(searchedDate.atStartOfDay(), 1, TimeUnit.DAY), allEvents);
@@ -180,16 +180,17 @@ public class EventPlanner {
     }
 
     private void printEvents(Event[] events){
-        DateTimeFormatter customFormat = DateTimeFormatter.ofPattern("dd-MM-yy HH:mm");
-
+        DateTimeFormatter customFormat = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
+        events = ArrayHelper.sortById(events);
         if (events.length == 0){
             System.out.println("No events found.");
         } else {
+            System.out.printf("%d Events found:%n", events.length);
             System.out.print("  [ID] -- [Title] -- [Start] -- [End]");
             for (Event event : events) {
-                System.out.printf("%n  [%d] -- %s -- %s -- %s ", event.getID(), event.getTitle(), event.getStart().format(customFormat), EventHelperService.getEndOfEvent(event).format(customFormat));
+                System.out.printf("%n  [%d] -- %s -- %s -> %s ", event.getID(), event.getTitle(), event.getStart().format(customFormat), EventHelperService.getEndOfEvent(event).format(customFormat));
             }
-            System.out.println();
+            System.out.println("\n");
         }
 
     }

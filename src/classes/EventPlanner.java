@@ -5,10 +5,13 @@ import classes.event.OnlineEvent;
 import classes.event.OnsiteEvent;
 import classes.event.TimeUnit;
 import helper.ArrayHelper;
+import helper.EventHelperService;
 import helper.input.UserInputService;
 import helper.validation.ValidationService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class EventPlanner {
     private Location[] locations;
@@ -18,7 +21,8 @@ public class EventPlanner {
     int eventCount = 0;
 
     public EventPlanner(int locationCount){
-        locations = setupLocations(locationCount + 1);
+        //locations = setupLocations(locationCount + 1);
+        locations = demoLocations();
     }
 
     private Location[] setupLocations(int locationCount){
@@ -30,6 +34,24 @@ public class EventPlanner {
             locations[i] = new Location(name, maxCapacity);
         }
         locations[locationCount - 1] = new Location("Online", -1);
+        return locations;
+    }
+
+    private Location[] demoLocations(){
+        Location[] locations = new Location[3];
+        locations[0] = new Location("Online", -1);
+        locations[1] = new Location("Room 1", 10);
+        locations[2] = new Location("Room 2", 20);
+
+        locations[0].addEvent(new OnlineEvent(1, "Online Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[0]));
+        locations[0].addEvent(new OnlineEvent(2, "Online Event 2", LocalDateTime.of(2021, 2, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[0]));
+
+        locations[1].addEvent(new OnsiteEvent(3, "Onsite Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[1]));
+
+        locations[2].addEvent(new OnsiteEvent(5, "Onsite Event 3", LocalDateTime.of(2021, 1, 1, 10, 0), 1, TimeUnit.HOUR , new String[]{"John", "Jane"}, locations[2]));
+        locations[2].addEvent(new OnsiteEvent(6, "Onsite Event 4", LocalDateTime.of(2021, 2, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[2]));
+        locations[2].addEvent(new OnsiteEvent(7, "Onsite Event 5", LocalDateTime.of(2021, 3, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[2]));
+
         return locations;
     }
 
@@ -50,7 +72,7 @@ public class EventPlanner {
 
         // Select Location of new Event
         System.out.println("Please select the location of the event:");
-        Location location = locationSelector();
+        Location location = locationSelector(locations);
 
         // Check if location is available
         // Disable Check if Online Event#
@@ -62,8 +84,14 @@ public class EventPlanner {
         }
 
         while(!locationAvailable){
-            System.out.println("The location is not available at this time. Please select another location:");
-            location = locationSelector();
+            Location[] freeLocations = getFreeLocationsOnDate(startDate, length, timeUnit);
+            if (freeLocations.length != 0){
+                System.out.println("The selected location is not available on the selected date. Please select another location:");
+                location = locationSelector(freeLocations);
+            } else {
+                System.out.println("There are no free locations on the selected date. Please select another date:");
+                startDate = validationService.validateInputIsLocalDateTime("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
+            }
             if (location.getName().equals("Online")){
                 locationAvailable = true;
             } else {
@@ -100,22 +128,22 @@ public class EventPlanner {
         Event[] selectedEvents = new Event[0];
         for (Event event : allEvents) {
             if (event.getTitle().toLowerCase().contains(searchedName)){
-                ArrayHelper.add(selectedEvents, event);
+                selectedEvents = ArrayHelper.add(selectedEvents, event);
             }
         }
         printEvents(selectedEvents);
     }
 
     public void getEventsByLocation(){
-        Location location = locationSelector();
+        Location location = locationSelector(locations);
         printEvents(location.getEvents());
     }
 
     public void getEventsByDate(){
-        LocalDateTime searchedDate = validationService.validateInputIsLocalDateTime("Please enter the date of the searched events: (DD.MM.YYYY HH:mm)");
+        LocalDate searchedDate = validationService.validateInputIsLocalDate("Please enter the date of the searched events: (DD.MM.YYYY HH:mm)");
         Event[] allEvents = new Event[0];
         for (Location location : locations) {
-            ArrayHelper.addAll(location.eventsWhileDuration(searchedDate, 1, TimeUnit.DAY), allEvents);
+            allEvents = ArrayHelper.addAll(location.eventsWhileDuration(searchedDate.atStartOfDay(), 1, TimeUnit.DAY), allEvents);
         }
         printEvents(allEvents);
     }
@@ -152,22 +180,36 @@ public class EventPlanner {
     }
 
     private void printEvents(Event[] events){
+        DateTimeFormatter customFormat = DateTimeFormatter.ofPattern("dd-MM-yy HH:mm");
+
         if (events.length == 0){
             System.out.println("No events found.");
         } else {
+            System.out.print("  [ID] -- [Title] -- [Start] -- [End]");
             for (Event event : events) {
-                System.out.printf("- %s", event.getTitle());
+                System.out.printf("%n  [%d] -- %s -- %s -- %s ", event.getID(), event.getTitle(), event.getStart().format(customFormat), EventHelperService.getEndOfEvent(event).format(customFormat));
             }
+            System.out.println();
         }
 
     }
 
-    private Location locationSelector(){
+    private Location locationSelector(Location[] locations){
         for (int i = 0; i < locations.length; i++) {
             System.out.printf("%d: %s%n", i+1, locations[i].getName());
         }
         int locationPlace = validationService.validateInputIsInRange("Please enter the number of the location: ", 1, locations.length);
         return locations[locationPlace-1];
+    }
+
+    private Location[] getFreeLocationsOnDate(LocalDateTime startDate, double length, TimeUnit timeUnit){
+        Location[] freeLocations = new Location[0];
+        for (Location location : locations){
+            if (location.eventsWhileDuration(startDate, length, timeUnit).length == 0){
+                freeLocations = ArrayHelper.add(freeLocations, location);
+            }
+        }
+        return freeLocations;
     }
 
 }

@@ -2,6 +2,7 @@ package helper.validation;
 
 import helper.input.UserInputService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -87,7 +88,29 @@ public class ValidationService {
             //If so, return the Integer
             //If not, print an error message and ask for input again
             try {
-                return LocalDateTime.parse(input, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+                return LocalDateTime.parse(input, DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm"));
+            } catch (DateTimeParseException e) {
+                System.out.println("Input is not a date");
+            }
+            tries++;
+        }while (tries < 3);
+        System.out.println("You have entered an invalid input 3 times. Exiting the program");
+        System.exit(1);
+        return null;
+    }
+
+    public LocalDate validateInputIsLocalDate(String message){
+        String input;
+        int tries = 0;
+        do{
+            //Get a String Input from the user
+            input = userInputService.getStringFromUserWithMessage(message);
+
+            //To assert the input is an Integer, try to parse it to an Integer
+            //If so, return the Integer
+            //If not, print an error message and ask for input again
+            try {
+                return LocalDate.parse(input, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
             } catch (DateTimeParseException e) {
                 System.out.println("Input is not a date");
             }

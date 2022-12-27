@@ -12,7 +12,4 @@ public class OnlineEvent extends Event {
         this.LOCATION = location;
     }
 
-    public Location getLocation() {
-        return this.LOCATION;
-    }
 }

@@ -12,12 +12,4 @@ public class OnsiteEvent extends Event{
         super(ID, title, start, length, timeUnit, participants);
         this.location = location;
     }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
 }

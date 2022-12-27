@@ -27,40 +27,18 @@ public class Event {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public LocalDateTime getStart() {
         return start;
-    }
-
-    public void setStart(LocalDateTime start) {
-        this.start = start;
     }
 
     public double getLength() {
         return length;
     }
 
-    public void setLength(double length) {
-        this.length = length;
-    }
 
     public TimeUnit getTimeUnit() {
         return timeUnit;
-    }
-
-    public void setTimeUnit(TimeUnit timeUnit) {
-        this.timeUnit = timeUnit;
-    }
-
-    public String[] getParticipants() {
-        return participants;
-    }
-
-    public void setParticipants(String[] participants) {
-        this.participants = participants;
     }
 
 }

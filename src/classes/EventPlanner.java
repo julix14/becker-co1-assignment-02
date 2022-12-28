@@ -183,15 +183,22 @@ public class EventPlanner {
 
 
     private void printEvents(Event[] events){
-        DateTimeFormatter customFormat = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
+        // Set formatting constants for printing
+        String WHITE_UNDERLINED = "\033[4m";
+        String RESET = "\033[0m";
+        DateTimeFormatter CUSTOMFORMAT = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
+
+        // Sort events by ID
         events = ArrayHelper.sortById(events);
-        if (events.length == 0){
+
+        //Print events as table
+        if (events.length == 0) {
             System.out.println("No events found.");
         } else {
             System.out.printf("%d Events found:%n", events.length);
-            System.out.print("  [ID] -- [Title] -- [Start] -- [End]");
+            System.out.printf(WHITE_UNDERLINED + "  %-4s    %-16s    %-10s    %-14s    %-14s" + RESET, "ID", "Title", "Location", "Start", "End");
             for (Event event : events) {
-                System.out.printf("%n  [%d] -- %s -- %s -> %s ", event.getID(), event.getTitle(), event.getStart().format(customFormat), EventHelperService.getEndOfEvent(event).format(customFormat));
+                System.out.printf("%n  [%02d]    %-16s    %-10s    %-14s    %-14s ", event.getID(), event.getTitle(), event.getLocation().getName(), event.getStart().format(CUSTOMFORMAT), EventHelperService.getEndOfEvent(event).format(CUSTOMFORMAT));
             }
             System.out.println("\n");
         }

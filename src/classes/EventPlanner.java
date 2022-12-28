@@ -15,10 +15,12 @@ import java.time.format.DateTimeFormatter;
 
 public class EventPlanner {
     private Location[] locations;
-    UserInputService userInputService = new UserInputService();
-    ValidationService validationService = new ValidationService();
+    private final UserInputService userInputService = new UserInputService();
+    private final ValidationService validationService = new ValidationService();
 
-    int eventCount = 0;
+    private int eventCount = 0;
+
+    private Event[] events = new Event[0];
 
     public EventPlanner(int locationCount){
         //locations = setupLocations(locationCount + 1);
@@ -43,14 +45,14 @@ public class EventPlanner {
         locations[1] = new Location("Room 1", 10);
         locations[2] = new Location("Room 2", 20);
 
-        locations[0].addEvent(new OnlineEvent(1, "Online Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[0]));
-        locations[0].addEvent(new OnlineEvent(2, "Online Event 2", LocalDateTime.of(2021, 2, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[0]));
+        events = ArrayHelper.add(events, new OnlineEvent(1, "Online Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[0]));
+        events = ArrayHelper.add(events, new OnlineEvent(2, "Online Event 2", LocalDateTime.of(2021, 2, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[0]));
 
-        locations[1].addEvent(new OnsiteEvent(3, "Onsite Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[1]));
+        events = ArrayHelper.add(events, new OnsiteEvent(3, "Onsite Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[1]));
 
-        locations[2].addEvent(new OnsiteEvent(5, "Onsite Event 3", LocalDateTime.of(2021, 1, 1, 10, 0), 1, TimeUnit.HOUR , new String[]{"John", "Jane"}, locations[2]));
-        locations[2].addEvent(new OnsiteEvent(6, "Onsite Event 4", LocalDateTime.of(2021, 2, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[2]));
-        locations[2].addEvent(new OnsiteEvent(7, "Onsite Event 5", LocalDateTime.of(2021, 3, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[2]));
+        events = ArrayHelper.add(events, new OnsiteEvent(5, "Onsite Event 3", LocalDateTime.of(2021, 1, 1, 10, 0), 1, TimeUnit.HOUR , new String[]{"John", "Jane"}, locations[2]));
+        events = ArrayHelper.add(events, new OnsiteEvent(6, "Onsite Event 4", LocalDateTime.of(2021, 2, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[2]));
+        events = ArrayHelper.add(events, new OnsiteEvent(7, "Onsite Event 5", LocalDateTime.of(2021, 3, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[2]));
 
         return locations;
     }
@@ -80,7 +82,7 @@ public class EventPlanner {
         if (location.getName().equals("Online")){
             locationAvailable = true;
         } else {
-            locationAvailable = location.eventsWhileDuration(startDate, length, timeUnit).length == 0;
+            locationAvailable = EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), startDate, length, timeUnit).length == 0;
         }
 
         while(!locationAvailable){
@@ -95,18 +97,24 @@ public class EventPlanner {
             if (location.getName().equals("Online")){
                 locationAvailable = true;
             } else {
-                locationAvailable = location.eventsWhileDuration(startDate, length, timeUnit).length == 0;
+                locationAvailable = EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), startDate, length, timeUnit).length == 0;
             }
         }
 
         // Add participants
-        int participantsCount = validationService.validateInputIsInRange("Please enter the number of participants: ", 1, location.getMaxCapacity());
+        int participantsCount;
+        if (location.getName().equals("Online")){
+            participantsCount = validationService.validateInputIsInt("Please enter the number of participants: ");
+        } else {
+            participantsCount = validationService.validateInputIsInRange("Please enter the number of participants: ", 1, location.getMaxCapacity());
+        }
+
         String[] participants = new String[participantsCount];
         for (int i = 0; i < participantsCount; i++) {
             participants[i] = userInputService.getStringFromUserWithMessage(String.format("Please enter the name of participant %d: ", i+1));
         }
 
-        // Create Event and add to location
+        // Create Event and add to events-list
         Event event;
         if (location.getName().equals("Online")){
             event = new OnlineEvent(eventCount, name, startDate, length, timeUnit, participants, location);
@@ -114,19 +122,19 @@ public class EventPlanner {
         } else {
             event = new OnsiteEvent(eventCount, name, startDate, length, timeUnit, participants, location);
         }
-        location.addEvent(event);
+        events = ArrayHelper.add(events, event);
+        eventCount++;
     }
     public void printAllEvents(){
-        Event[] allEvents = getAllEvents();
-        printEvents(allEvents);
+        printEvents(events);
         System.out.println();
     }
 
     public void getEventsByTitle(){
         String searchedName = userInputService.getStringFromUserWithMessage("Please enter the name of the searched event: ").toLowerCase();
-        Event[] allEvents = getAllEvents();
+
         Event[] selectedEvents = new Event[0];
-        for (Event event : allEvents) {
+        for (Event event : events) {
             if (event.getTitle().toLowerCase().contains(searchedName)){
                 selectedEvents = ArrayHelper.add(selectedEvents, event);
             }
@@ -136,48 +144,43 @@ public class EventPlanner {
 
     public void getEventsByLocation(){
         Location location = locationSelector(locations);
-        printEvents(location.getEvents());
+        printEvents(EventHelperService.eventsOnLocation(events, location));
     }
 
     public void getEventsByDate(){
         LocalDate searchedDate = validationService.validateInputIsLocalDate("Please enter the date of the searched events: (DD.MM.YYYY)");
         Event[] allEvents = new Event[0];
         for (Location location : locations) {
-            allEvents = ArrayHelper.addAll(location.eventsWhileDuration(searchedDate.atStartOfDay(), 1, TimeUnit.DAY), allEvents);
+            allEvents = ArrayHelper.addAll(EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), searchedDate.atStartOfDay(), 1, TimeUnit.DAY), allEvents);
         }
         printEvents(allEvents);
     }
 
     public void showMostUsedLocation(){
         Location mostUsedLocation = locations[0];
+        int mostUsedLocationCount = 0;
         for (Location location : locations) {
-            if (location.getEvents().length > mostUsedLocation.getEvents().length){
+            if (EventHelperService.eventsOnLocation(events, location).length > mostUsedLocationCount){
                 mostUsedLocation = location;
+                mostUsedLocationCount = EventHelperService.eventsOnLocation(events, location).length;
             }
         }
-        System.out.printf("%nThe most used location is %s with %d events.%n", mostUsedLocation.getName(), mostUsedLocation.getEvents().length);
+        System.out.printf("%nThe most used location is %s with %d events.%n", mostUsedLocation.getName(), mostUsedLocationCount);
     }
 
     public void showLeastUsedLocation(){
         Location leastUsedLocation = locations[0];
+        int leastUsedLocationCount = Integer.MAX_VALUE;
         for (Location location : locations) {
-            if (location.getEvents().length < leastUsedLocation.getEvents().length){
+            if (EventHelperService.eventsOnLocation(events, location).length < leastUsedLocationCount){
                 leastUsedLocation = location;
+                leastUsedLocationCount = EventHelperService.eventsOnLocation(events, location).length;
             }
         }
-        System.out.printf("%nThe least used location is %s with %d events.%n", leastUsedLocation.getName(), leastUsedLocation.getEvents().length);
+        System.out.printf("%nThe least used location is %s with %d events.%n", leastUsedLocation.getName(), leastUsedLocationCount);
 
     }
 
-    private Event[] getAllEvents(){
-        Event[] allEvents = new Event[0];
-        for (Location location : locations) {
-            if (location.getEvents() != null && location.getEvents().length > 0){
-                allEvents = ArrayHelper.addAll(location.getEvents(), allEvents);
-            }
-        }
-        return allEvents;
-    }
 
     private void printEvents(Event[] events){
         DateTimeFormatter customFormat = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
@@ -206,7 +209,7 @@ public class EventPlanner {
     private Location[] getFreeLocationsOnDate(LocalDateTime startDate, double length, TimeUnit timeUnit){
         Location[] freeLocations = new Location[0];
         for (Location location : locations){
-            if (location.eventsWhileDuration(startDate, length, timeUnit).length == 0){
+            if (EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), startDate, length, timeUnit).length == 0){
                 freeLocations = ArrayHelper.add(freeLocations, location);
             }
         }

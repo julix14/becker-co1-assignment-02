@@ -1,5 +1,7 @@
 package classes.event;
 
+import classes.Location;
+
 import java.time.LocalDateTime;
 
 public class Event {
@@ -39,6 +41,10 @@ public class Event {
 
     public TimeUnit getTimeUnit() {
         return timeUnit;
+    }
+
+    public Location getLocation() {
+        return null;
     }
 
 }

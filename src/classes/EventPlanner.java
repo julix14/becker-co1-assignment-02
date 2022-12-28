@@ -22,16 +22,20 @@ public class EventPlanner {
 
     private Event[] events = new Event[0];
 
-    public EventPlanner(int locationCount){
-        //locations = setupLocations(locationCount + 1);
+    public EventPlanner(int locationCount) {
+        locations = setupLocations(locationCount + 1);
+
+    }
+
+    public EventPlanner() {
         locations = demoLocations();
     }
 
-    private Location[] setupLocations(int locationCount){
+    private Location[] setupLocations(int locationCount) {
         System.out.printf("%nPlease enter the name and max capacity of %d locations:", locationCount - 1);
         this.locations = new Location[locationCount];
         for (int i = 0; i < locationCount - 1; i++) {
-            String name = userInputService.getStringFromUserWithMessage(String.format("%nPlease enter the name of location %d: ", i+1));
+            String name = userInputService.getStringFromUserWithMessage(String.format("%nPlease enter the name of location %d: ", i + 1));
             int maxCapacity = validationService.validateInputIsInt(String.format("Please enter the max. capacity of %s: ", name));
             locations[i] = new Location(name, maxCapacity);
         }
@@ -50,10 +54,10 @@ public class EventPlanner {
 
         events = ArrayHelper.add(events, new OnsiteEvent(3, "Onsite Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[1]));
 
-        events = ArrayHelper.add(events, new OnsiteEvent(5, "Onsite Event 3", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.HOUR, new String[]{"John", "Jane"}, locations[2]));
-        events = ArrayHelper.add(events, new OnsiteEvent(6, "Onsite Event 4", LocalDateTime.of(2021, 2, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[2]));
-        events = ArrayHelper.add(events, new OnsiteEvent(7, "Onsite Event 5", LocalDateTime.of(2021, 3, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[2]));
-
+        events = ArrayHelper.add(events, new OnsiteEvent(4, "Onsite Event 2", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.HOUR, new String[]{"John", "Jane"}, locations[2]));
+        events = ArrayHelper.add(events, new OnsiteEvent(5, "Onsite Event 3", LocalDateTime.of(2021, 2, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[2]));
+        events = ArrayHelper.add(events, new OnsiteEvent(6, "Onsite Event 4", LocalDateTime.of(2021, 3, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[2]));
+        eventCount = 6;
         return locations;
     }
 

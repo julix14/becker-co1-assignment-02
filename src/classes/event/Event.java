@@ -8,11 +8,11 @@ public class Event {
     private final int ID;
     private String title;
     private LocalDateTime start;
-    private double length;
+    private long length;
     private Unit unit;
     private String[] participants;
 
-    public Event(int ID, String title, LocalDateTime start, double length, Unit unit, String[] participants) {
+    public Event(int ID, String title, LocalDateTime start, long length, Unit unit, String[] participants) {
         this.ID = ID;
         this.title = title;
         this.start = start;
@@ -34,7 +34,7 @@ public class Event {
         return start;
     }
 
-    public double getLength() {
+    public long getLength() {
         return length;
     }
 

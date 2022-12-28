@@ -8,7 +8,7 @@ public class OnsiteEvent extends Event {
     private Location location;
 
 
-    public OnsiteEvent(int ID, String title, LocalDateTime start, double length, Unit unit, String[] participants, Location location) {
+    public OnsiteEvent(int ID, String title, LocalDateTime start, long length, Unit unit, String[] participants, Location location) {
         super(ID, title, start, length, unit, participants);
         this.location = location;
     }

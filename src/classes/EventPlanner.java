@@ -66,7 +66,7 @@ public class EventPlanner {
         LocalDateTime startDate = validationService.validateInputIsLocalDateTime("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
 
         // Get length of new Event
-        double length = validationService.validateInputIsDouble("Please enter the length of the event: ");
+        long length = validationService.validateInputIsLong("Please enter the length of the event: ");
 
         // Get TimeUnit of new Event
         int timeUnitPlace = validationService.validateInputIsInRange("Please enter the time unit of the event: (1 = Hours, 2 = Days, 3 = Months)", 1, 3);
@@ -214,7 +214,7 @@ public class EventPlanner {
         return locations[locationPlace-1];
     }
 
-    private Location[] getFreeLocationsOnDate(LocalDateTime startDate, double length, Unit unit) {
+    private Location[] getFreeLocationsOnDate(LocalDateTime startDate, long length, Unit unit) {
         Location[] freeLocations = new Location[0];
         for (Location location : locations) {
             if (EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), startDate, length, unit).length == 0) {

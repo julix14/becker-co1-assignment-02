@@ -32,10 +32,10 @@ public class ValidationService {
         return -1;
     }
 
-    public double validateInputIsDouble(String message) {
+    public long validateInputIsLong(String message) {
         String input;
         int tries = 0;
-        do{
+        do {
             //Get a String Input from the user
             input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
 
@@ -43,7 +43,7 @@ public class ValidationService {
             //If so, return the Integer
             //If not, print an error message and ask for input again
             try {
-                return Double.parseDouble(input);
+                return Long.parseLong(input);
             } catch (NumberFormatException e) {
                 System.out.println("Input is not a number");
             }

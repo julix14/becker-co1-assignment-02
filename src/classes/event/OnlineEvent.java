@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 public class OnlineEvent extends Event {
     private final Location LOCATION;
 
-    public OnlineEvent(int ID, String title, LocalDateTime start, double length, TimeUnit timeUnit, String[] participants, Location location) {
-        super(ID, title, start, length, timeUnit, participants);
+    public OnlineEvent(int ID, String title, LocalDateTime start, double length, Unit unit, String[] participants, Location location) {
+        super(ID, title, start, length, unit, participants);
         this.LOCATION = location;
     }
 

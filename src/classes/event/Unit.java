@@ -1,6 +1,6 @@
 package classes.event;
 
-public enum TimeUnit {
+public enum Unit {
     HOUR,
     DAY,
     MONTH

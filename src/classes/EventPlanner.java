@@ -3,7 +3,7 @@ package classes;
 import classes.event.Event;
 import classes.event.OnlineEvent;
 import classes.event.OnsiteEvent;
-import classes.event.TimeUnit;
+import classes.event.Unit;
 import helper.ArrayHelper;
 import helper.EventHelperService;
 import helper.input.UserInputService;
@@ -39,20 +39,20 @@ public class EventPlanner {
         return locations;
     }
 
-    private Location[] demoLocations(){
+    private Location[] demoLocations() {
         Location[] locations = new Location[3];
         locations[0] = new Location("Online", -1);
         locations[1] = new Location("Room 1", 10);
         locations[2] = new Location("Room 2", 20);
 
-        events = ArrayHelper.add(events, new OnlineEvent(1, "Online Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[0]));
-        events = ArrayHelper.add(events, new OnlineEvent(2, "Online Event 2", LocalDateTime.of(2021, 2, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[0]));
+        events = ArrayHelper.add(events, new OnlineEvent(1, "Online Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[0]));
+        events = ArrayHelper.add(events, new OnlineEvent(2, "Online Event 2", LocalDateTime.of(2021, 2, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[0]));
 
-        events = ArrayHelper.add(events, new OnsiteEvent(3, "Onsite Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[1]));
+        events = ArrayHelper.add(events, new OnsiteEvent(3, "Onsite Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[1]));
 
-        events = ArrayHelper.add(events, new OnsiteEvent(5, "Onsite Event 3", LocalDateTime.of(2021, 1, 1, 10, 0), 1, TimeUnit.HOUR , new String[]{"John", "Jane"}, locations[2]));
-        events = ArrayHelper.add(events, new OnsiteEvent(6, "Onsite Event 4", LocalDateTime.of(2021, 2, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[2]));
-        events = ArrayHelper.add(events, new OnsiteEvent(7, "Onsite Event 5", LocalDateTime.of(2021, 3, 1, 10, 0), 1, TimeUnit.DAY , new String[]{"John", "Jane"}, locations[2]));
+        events = ArrayHelper.add(events, new OnsiteEvent(5, "Onsite Event 3", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.HOUR, new String[]{"John", "Jane"}, locations[2]));
+        events = ArrayHelper.add(events, new OnsiteEvent(6, "Onsite Event 4", LocalDateTime.of(2021, 2, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[2]));
+        events = ArrayHelper.add(events, new OnsiteEvent(7, "Onsite Event 5", LocalDateTime.of(2021, 3, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[2]));
 
         return locations;
     }
@@ -70,7 +70,7 @@ public class EventPlanner {
 
         // Get TimeUnit of new Event
         int timeUnitPlace = validationService.validateInputIsInRange("Please enter the time unit of the event: (1 = Hours, 2 = Days, 3 = Months)", 1, 3);
-        TimeUnit timeUnit = TimeUnit.values()[timeUnitPlace-1];
+        Unit unit = Unit.values()[timeUnitPlace - 1];
 
         // Select Location of new Event
         System.out.println("Please select the location of the event:");
@@ -82,11 +82,11 @@ public class EventPlanner {
         if (location.getName().equals("Online")){
             locationAvailable = true;
         } else {
-            locationAvailable = EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), startDate, length, timeUnit).length == 0;
+            locationAvailable = EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), startDate, length, unit).length == 0;
         }
 
         while(!locationAvailable){
-            Location[] freeLocations = getFreeLocationsOnDate(startDate, length, timeUnit);
+            Location[] freeLocations = getFreeLocationsOnDate(startDate, length, unit);
             if (freeLocations.length != 0){
                 System.out.println("The selected location is not available on the selected date. Please select another location:");
                 location = locationSelector(freeLocations);
@@ -97,7 +97,7 @@ public class EventPlanner {
             if (location.getName().equals("Online")){
                 locationAvailable = true;
             } else {
-                locationAvailable = EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), startDate, length, timeUnit).length == 0;
+                locationAvailable = EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), startDate, length, unit).length == 0;
             }
         }
 
@@ -117,10 +117,10 @@ public class EventPlanner {
         // Create Event and add to events-list
         Event event;
         if (location.getName().equals("Online")){
-            event = new OnlineEvent(eventCount, name, startDate, length, timeUnit, participants, location);
+            event = new OnlineEvent(eventCount, name, startDate, length, unit, participants, location);
 
         } else {
-            event = new OnsiteEvent(eventCount, name, startDate, length, timeUnit, participants, location);
+            event = new OnsiteEvent(eventCount, name, startDate, length, unit, participants, location);
         }
         events = ArrayHelper.add(events, event);
         eventCount++;
@@ -151,7 +151,7 @@ public class EventPlanner {
         LocalDate searchedDate = validationService.validateInputIsLocalDate("Please enter the date of the searched events: (DD.MM.YYYY)");
         Event[] allEvents = new Event[0];
         for (Location location : locations) {
-            allEvents = ArrayHelper.addAll(EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), searchedDate.atStartOfDay(), 1, TimeUnit.DAY), allEvents);
+            allEvents = ArrayHelper.addAll(EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), searchedDate.atStartOfDay(), 1, Unit.DAY), allEvents);
         }
         printEvents(allEvents);
     }
@@ -213,10 +213,10 @@ public class EventPlanner {
         return locations[locationPlace-1];
     }
 
-    private Location[] getFreeLocationsOnDate(LocalDateTime startDate, double length, TimeUnit timeUnit){
+    private Location[] getFreeLocationsOnDate(LocalDateTime startDate, double length, Unit unit) {
         Location[] freeLocations = new Location[0];
-        for (Location location : locations){
-            if (EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), startDate, length, timeUnit).length == 0){
+        for (Location location : locations) {
+            if (EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), startDate, length, unit).length == 0) {
                 freeLocations = ArrayHelper.add(freeLocations, location);
             }
         }

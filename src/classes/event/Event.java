@@ -9,15 +9,15 @@ public class Event {
     private String title;
     private LocalDateTime start;
     private double length;
-    private TimeUnit timeUnit;
+    private Unit unit;
     private String[] participants;
 
-    public Event(int ID, String title, LocalDateTime start, double length, TimeUnit timeUnit, String[] participants) {
+    public Event(int ID, String title, LocalDateTime start, double length, Unit unit, String[] participants) {
         this.ID = ID;
         this.title = title;
         this.start = start;
         this.length = length;
-        this.timeUnit = timeUnit;
+        this.unit = unit;
         this.participants = participants;
     }
 
@@ -39,8 +39,8 @@ public class Event {
     }
 
 
-    public TimeUnit getTimeUnit() {
-        return timeUnit;
+    public Unit getTimeUnit() {
+        return unit;
     }
 
     public Location getLocation() {

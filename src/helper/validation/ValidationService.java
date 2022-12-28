@@ -10,10 +10,10 @@ import java.time.format.DateTimeParseException;
 public class ValidationService {
     private final UserInputService USERINPUTSERVICE = new UserInputService();
 
-    public int validateInputIsInt(String message) {
+    public int getValidIntFromUser(String message) {
         String input;
         int tries = 0;
-        do{
+        do {
             //Get a String Input from the user
             input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
 
@@ -32,32 +32,10 @@ public class ValidationService {
         return -1;
     }
 
-    public long validateInputIsLong(String message) {
+    public int getValidIntInRangeFromUser(String message, int min, int max) {
         String input;
         int tries = 0;
         do {
-            //Get a String Input from the user
-            input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
-
-            //To assert the input is an Integer, try to parse it to an Integer
-            //If so, return the Integer
-            //If not, print an error message and ask for input again
-            try {
-                return Long.parseLong(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Input is not a number");
-            }
-            tries++;
-        }while (tries < 3);
-        System.out.println("You have entered an invalid input 3 times. Exiting the program");
-        System.exit(1);
-        return -1;
-    }
-
-    public int validateInputIsInRange(String message, int min, int max) {
-        String input;
-        int tries = 0;
-        do{
             //Get a String Input from the user
             input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
             String regexString = "[" + min + "-" + max + "]";
@@ -77,10 +55,10 @@ public class ValidationService {
         return -1;
     }
 
-    public LocalDateTime validateInputIsLocalDateTime(String message){
+    public LocalDateTime getValidLocalDateTimeFromUser(String message) {
         String input;
         int tries = 0;
-        do{
+        do {
             //Get a String Input from the user
             input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
 
@@ -99,10 +77,10 @@ public class ValidationService {
         return null;
     }
 
-    public LocalDate validateInputIsLocalDate(String message){
+    public LocalDate getValidLocalDateFromUser(String message) {
         String input;
         int tries = 0;
-        do{
+        do {
             //Get a String Input from the user
             input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
 

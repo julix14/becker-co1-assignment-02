@@ -15,17 +15,15 @@ import java.time.format.DateTimeFormatter;
 
 public class EventPlanner {
     private Location[] locations;
-    //Name convention for constants
-    private final UserInputService userInputService = new UserInputService();
-    //Name convention for constants
-    private final ValidationService validationService = new ValidationService();
+    private final UserInputService USERINPUTSERVICE = new UserInputService();
+    private final ValidationService VALIDATIONSERVICE = new ValidationService();
 
     private int eventCount = 0;
 
     private Event[] events = new Event[0];
 
     //Ich glaube Mohammed wollte die initialisierung immer im constructur
-    public EventPlanner(int locationCount){
+    public EventPlanner(int locationCount) {
         //locations = setupLocations(locationCount + 1);
         locations = demoLocations();
     }
@@ -34,8 +32,8 @@ public class EventPlanner {
         System.out.printf("%nPlease enter the name and max capacity of %d locations:", locationCount - 1);
         this.locations = new Location[locationCount];
         for (int i = 0; i < locationCount - 1; i++) {
-            String name = userInputService.getStringFromUserWithMessage(String.format("%nPlease enter the name of location %d: ", i+1));
-            int maxCapacity = validationService.validateInputIsInt(String.format("Please enter the max. capacity of %s: ", name));
+            String name = USERINPUTSERVICE.getStringFromUserWithMessage(String.format("%nPlease enter the name of location %d: ", i + 1));
+            int maxCapacity = VALIDATIONSERVICE.getValidIntFromUser(String.format("Please enter the max. capacity of %s: ", name));
             locations[i] = new Location(name, maxCapacity);
         }
         locations[locationCount - 1] = new Location("Online", -1);
@@ -63,20 +61,17 @@ public class EventPlanner {
     public void createNewEvent(){
         System.out.println("Create new event");
         // Get name of new Event
-        String name = userInputService.getStringFromUserWithMessage("Please enter the name of the event: ");
+        String name = USERINPUTSERVICE.getStringFromUserWithMessage("Please enter the name of the event: ");
 
-        //Der Name passt irgendwie nicht zu dem, was die Funktion macht
-        //Du holst dir ja ein Datum von user und validierst nichts. Ich würde das ganze über den userInputService machen, welcher dann die Validation aufruft
-        //So in etwas wahrscheinlich wie in line 66
         // Get Start of new Event
-        LocalDateTime startDate = validationService.validateInputIsLocalDateTime("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
+        LocalDateTime startDate = VALIDATIONSERVICE.getValidLocalDateTimeFromUser("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
 
         //Warum long? Int sollte doch eigentlich ausreichen oder?
         // Get length of new Event
-        long length = validationService.validateInputIsLong("Please enter the length of the event: ");
+        int length = VALIDATIONSERVICE.getValidIntFromUser("Please enter the length of the event: ");
 
         // Get TimeUnit of new Event
-        int timeUnitPlace = validationService.validateInputIsInRange("Please enter the time unit of the event: (1 = Hours, 2 = Days, 3 = Months)", 1, 3);
+        int timeUnitPlace = VALIDATIONSERVICE.getValidIntInRangeFromUser("Please enter the time unit of the event: (1 = Hours, 2 = Days, 3 = Months)", 1, 3);
         Unit unit = Unit.values()[timeUnitPlace - 1];
 
         // Select Location of new Event
@@ -103,7 +98,7 @@ public class EventPlanner {
                 location = locationSelector(freeLocations);
             } else {
                 System.out.println("There are no free locations on the selected date. Please select another date:");
-                startDate = validationService.validateInputIsLocalDateTime("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
+                startDate = VALIDATIONSERVICE.getValidLocalDateTimeFromUser("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
             }
             if (location.getName().equals("Online")){
                 locationAvailable = true;
@@ -115,14 +110,14 @@ public class EventPlanner {
         // Add participants
         int participantsCount;
         if (location.getName().equals("Online")){
-            participantsCount = validationService.validateInputIsInt("Please enter the number of participants: ");
+            participantsCount = VALIDATIONSERVICE.getValidIntFromUser("Please enter the number of participants: ");
         } else {
-            participantsCount = validationService.validateInputIsInRange("Please enter the number of participants: ", 1, location.getMaxCapacity());
+            participantsCount = VALIDATIONSERVICE.getValidIntInRangeFromUser("Please enter the number of participants: ", 1, location.getMaxCapacity());
         }
 
         String[] participants = new String[participantsCount];
         for (int i = 0; i < participantsCount; i++) {
-            participants[i] = userInputService.getStringFromUserWithMessage(String.format("Please enter the name of participant %d: ", i+1));
+            participants[i] = USERINPUTSERVICE.getStringFromUserWithMessage(String.format("Please enter the name of participant %d: ", i + 1));
         }
 
         // Create Event and add to events-list
@@ -157,7 +152,7 @@ public class EventPlanner {
 
     public void showEventsByTitle() {
         //Würde die Variable irgendwie umbennen zu searchedNameLowerCase oder das in zwei Zeilen schreiben
-        String searchedName = userInputService.getStringFromUserWithMessage("Please enter the name of the searched event: ").toLowerCase();
+        String searchedName = USERINPUTSERVICE.getStringFromUserWithMessage("Please enter the name of the searched event: ").toLowerCase();
 
         Event[] selectedEvents = new Event[0];
         for (Event event : events) {
@@ -174,7 +169,7 @@ public class EventPlanner {
     }
 
     public void showEventsByParticularDate() {
-        LocalDate searchedDate = validationService.validateInputIsLocalDate("Please enter the date of the searched events: (DD.MM.YYYY)");
+        LocalDate searchedDate = VALIDATIONSERVICE.getValidLocalDateFromUser("Please enter the date of the searched events: (DD.MM.YYYY)");
         Event[] allEvents = new Event[0];
         for (Location location : locations) {
             allEvents = ArrayHelper.addAll(
@@ -242,11 +237,11 @@ public class EventPlanner {
         for (int i = 0; i < locations.length; i++) {
             System.out.printf("%d: %s%n", i+1, locations[i].getName());
         }
-        int locationPlace = validationService.validateInputIsInRange("Please enter the number of the location: ", 1, locations.length);
+        int locationPlace = VALIDATIONSERVICE.getValidIntInRangeFromUser("Please enter the number of the location: ", 1, locations.length);
         return locations[locationPlace-1];
     }
 
-    private Location[] getFreeLocationsOnDate(LocalDateTime startDate, long length, Unit unit) {
+    private Location[] getFreeLocationsOnDate(LocalDateTime startDate, int length, Unit unit) {
         Location[] freeLocations = new Location[0];
         for (Location location : locations) {
             if (EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), startDate, length, unit).length == 0) {

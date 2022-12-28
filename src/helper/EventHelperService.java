@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class EventHelperService {
     public static LocalDateTime getEndOfEvent(Event event) {
         Unit unit = event.getUnit();
-        long length = event.getLength();
+        int length = event.getLength();
         LocalDateTime start = event.getStart();
 
         return switch (unit) {
@@ -21,7 +21,7 @@ public class EventHelperService {
         };
     }
 
-    public static LocalDateTime getEndOfEvent(LocalDateTime start, Unit unit, long length) {
+    public static LocalDateTime getEndOfEvent(LocalDateTime start, Unit unit, int length) {
         return switch (unit) {
             case HOUR -> start.plusHours(length);
             case DAY -> start.plusDays(length);
@@ -29,7 +29,7 @@ public class EventHelperService {
         };
     }
 
-    public static Event[] eventsWhileDuration(Event[] events, LocalDateTime date, long length, Unit unit) {
+    public static Event[] eventsWhileDuration(Event[] events, LocalDateTime date, int length, Unit unit) {
         LocalDateTime endDate = getEndOfEvent(date, unit, length);
         Event[] eventsWhileDuration = new Event[0];
 

@@ -49,6 +49,6 @@ public class MenuHandler {
     }
 
     private int selectMenuItem(){
-        return validationService.validateInputIsInRange("Please select a menu item: ", 1, MENUITEMS.length);
+        return validationService.getValidIntInRangeFromUser("Please select a menu item: ", 1, MENUITEMS.length);
     }
 }

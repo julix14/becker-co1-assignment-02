@@ -7,10 +7,8 @@ public class Starter {
         ValidationService validationService = new ValidationService();
 
         System.out.println("Hello on the event planner!");
-        int locationCount = validationService.validateInputIsInt("For how many locations do you want to plan events? ");
+        int locationCount = validationService.getValidIntFromUser("For how many locations do you want to plan events? ");
 
         new MenuHandler(new EventPlanner(locationCount)).runMenu();
     }
-
-
 }

@@ -27,10 +27,10 @@ public class MenuHandler {
             selected = selectMenuItem();
             switch (selected){
                 case 1 -> eventPlanner.createNewEvent();
-                case 2 -> eventPlanner.printAllEvents();
-                case 3 -> eventPlanner.getEventsByTitle();
-                case 4 -> eventPlanner.getEventsByLocation();
-                case 5 -> eventPlanner.getEventsByDate();
+                case 2 -> eventPlanner.showAllEvents();
+                case 3 -> eventPlanner.showEventsByTitle();
+                case 4 -> eventPlanner.showEventsByLocation();
+                case 5 -> eventPlanner.showEventsByParticularDate();
                 case 6 -> eventPlanner.showMostUsedLocation();
                 case 7 -> eventPlanner.showLeastUsedLocation();
             }

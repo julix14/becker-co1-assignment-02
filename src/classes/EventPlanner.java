@@ -116,7 +116,7 @@ public class EventPlanner {
 
         // Create Event and add to events-list
         Event event;
-        if (location.getName().equals("Online")){
+        if (location.getName().equals("Online")) {
             event = new OnlineEvent(eventCount, name, startDate, length, unit, participants, location);
 
         } else {
@@ -125,29 +125,30 @@ public class EventPlanner {
         events = ArrayHelper.add(events, event);
         eventCount++;
     }
-    public void printAllEvents(){
+
+    public void showAllEvents() {
         printEvents(events);
         System.out.println();
     }
 
-    public void getEventsByTitle(){
+    public void showEventsByTitle() {
         String searchedName = userInputService.getStringFromUserWithMessage("Please enter the name of the searched event: ").toLowerCase();
 
         Event[] selectedEvents = new Event[0];
         for (Event event : events) {
-            if (event.getTitle().toLowerCase().contains(searchedName)){
+            if (event.getTitle().toLowerCase().contains(searchedName)) {
                 selectedEvents = ArrayHelper.add(selectedEvents, event);
             }
         }
         printEvents(selectedEvents);
     }
 
-    public void getEventsByLocation(){
+    public void showEventsByLocation() {
         Location location = locationSelector(locations);
         printEvents(EventHelperService.eventsOnLocation(events, location));
     }
 
-    public void getEventsByDate(){
+    public void showEventsByParticularDate() {
         LocalDate searchedDate = validationService.validateInputIsLocalDate("Please enter the date of the searched events: (DD.MM.YYYY)");
         Event[] allEvents = new Event[0];
         for (Location location : locations) {

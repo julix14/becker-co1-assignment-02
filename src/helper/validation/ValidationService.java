@@ -8,14 +8,14 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class ValidationService {
-    private final UserInputService userInputService = new UserInputService();
+    private final UserInputService USERINPUTSERVICE = new UserInputService();
 
     public int validateInputIsInt(String message) {
         String input;
         int tries = 0;
         do{
             //Get a String Input from the user
-            input = userInputService.getStringFromUserWithMessage(message);
+            input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
 
             //To assert the input is an Integer, try to parse it to an Integer
             //If so, return the Integer
@@ -37,7 +37,7 @@ public class ValidationService {
         int tries = 0;
         do{
             //Get a String Input from the user
-            input = userInputService.getStringFromUserWithMessage(message);
+            input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
 
             //To assert the input is an Integer, try to parse it to an Integer
             //If so, return the Integer
@@ -59,7 +59,7 @@ public class ValidationService {
         int tries = 0;
         do{
             //Get a String Input from the user
-            input = userInputService.getStringFromUserWithMessage(message);
+            input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
             String regexString = "[" + min + "-" + max + "]";
             //Check if the input is a number and in the range
             if (!input.matches("^[0-9]+$")) {
@@ -82,7 +82,7 @@ public class ValidationService {
         int tries = 0;
         do{
             //Get a String Input from the user
-            input = userInputService.getStringFromUserWithMessage(message);
+            input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
 
             //To assert the input is an Integer, try to parse it to an Integer
             //If so, return the Integer
@@ -104,7 +104,7 @@ public class ValidationService {
         int tries = 0;
         do{
             //Get a String Input from the user
-            input = userInputService.getStringFromUserWithMessage(message);
+            input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
 
             //To assert the input is an Integer, try to parse it to an Integer
             //If so, return the Integer

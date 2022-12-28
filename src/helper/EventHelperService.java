@@ -19,12 +19,16 @@ public class EventHelperService {
         };
     }
 
-    public static Event[] eventsWhileDuration(Event[] events, LocalDateTime date, double length, Unit unit) {
-        LocalDateTime endDate = switch (unit) {
-            case HOUR -> date.plusHours((long) Math.ceil(length));
-            case DAY -> date.plusDays((long) Math.ceil(length));
-            case MONTH -> date.plusMonths((long) Math.ceil(length));
+    public static LocalDateTime getEndOfEvent(LocalDateTime start, Unit unit, double length) {
+        return switch (unit) {
+            case HOUR -> start.plusHours((long) Math.ceil(length));
+            case DAY -> start.plusDays((long) Math.ceil(length));
+            case MONTH -> start.plusMonths((long) Math.ceil(length));
         };
+    }
+
+    public static Event[] eventsWhileDuration(Event[] events, LocalDateTime date, double length, Unit unit) {
+        LocalDateTime endDate = getEndOfEvent(date, unit, length);
         Event[] eventsWhileDuration = new Event[0];
 
         for (Event event : events) {

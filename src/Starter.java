@@ -11,6 +11,4 @@ public class Starter {
 
         new MenuHandler(new EventPlanner(locationCount)).runMenu();
     }
-
-
 }

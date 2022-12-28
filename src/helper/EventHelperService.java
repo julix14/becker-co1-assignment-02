@@ -6,6 +6,8 @@ import classes.event.Unit;
 
 import java.time.LocalDateTime;
 
+//Ein Service für 4 Helper function ist ziemlich unnötig. Meiner Meinung nach gehört das einfach in dein EventPlanner
+//Die Functions sind alle public, werden aber nur von dem EventPlanner genutzt. Damit können sie auch einfach privat im EventManger sein
 public class EventHelperService {
     public static LocalDateTime getEndOfEvent(Event event) {
         Unit unit = event.getUnit();

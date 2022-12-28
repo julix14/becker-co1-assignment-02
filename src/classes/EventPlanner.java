@@ -124,6 +124,8 @@ public class EventPlanner {
         }
         events = ArrayHelper.add(events, event);
         eventCount++;
+
+        System.out.println("Event created successfully!");
     }
 
     public void showAllEvents() {

@@ -88,7 +88,7 @@ public class ValidationService {
             //If so, return the Integer
             //If not, print an error message and ask for input again
             try {
-                return LocalDateTime.parse(input, DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm"));
+                return LocalDateTime.parse(input, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
             } catch (DateTimeParseException e) {
                 System.out.println("Input is not a date");
             }

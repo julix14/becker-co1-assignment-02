@@ -4,7 +4,6 @@ import classes.Location;
 import classes.event.Event;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 public class ArrayHelper {
     public static Event[] add(Event[] array, Event object){
@@ -35,11 +34,6 @@ public class ArrayHelper {
         return Arrays.copyOf(array, array.length + 1);
     }
 
-    public static Event[] sortById(Event[] array) {
-        // Sort the Event array by the ID of the events
-        Arrays.sort(array, Comparator.comparingInt(Event::getID));
-        return array;
-    }
 
     public static Location[] remove(Location[] array, Location object) {
         // Remove the given object from the array

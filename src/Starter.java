@@ -11,14 +11,13 @@ public class Starter {
 
 
         System.out.println("Hello on the event planner!");
-        int locationCount = VALIDATION_SERVICE.getValidIntFromUser("For how many locations do you want to plan events? ");
 
         String demoDesicision = USER_INPUT_SERVICE.getStringFromUserWithMessage("Do you want to run the demo with predefined locations? (y/n): ");
 
         if (demoDesicision.equals("y")) {
             new MenuHandler(new EventPlanner()).runMenu();
         } else {
-            int locationCount = VALIDATION_SERVICE.validateInputIsInt("For how many locations do you want to plan events? ");
+            int locationCount = VALIDATION_SERVICE.getValidIntFromUser("For how many locations do you want to plan events? ");
             new MenuHandler(new EventPlanner(locationCount)).runMenu();
         }
 

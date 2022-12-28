@@ -10,6 +10,8 @@ import helper.validation.ValidationService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class EventPlanner {
     private Location[] locations;
@@ -59,7 +61,7 @@ public class EventPlanner {
         events = ArrayHelper.add(events, new OnlineEvent(1, "Online Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[0]));
         events = ArrayHelper.add(events, new OnlineEvent(2, "Online Event 2", LocalDateTime.of(2021, 2, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[0]));
 
-        events = ArrayHelper.add(events, new OnsiteEvent(3, "Onsite Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[1]));
+        events = ArrayHelper.add(events, new OnsiteEvent(33, "Onsite Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[1]));
 
         events = ArrayHelper.add(events, new OnsiteEvent(4, "Onsite Event 2", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.HOUR, new String[]{"John", "Jane"}, locations[2]));
         events = ArrayHelper.add(events, new OnsiteEvent(5, "Onsite Event 3", LocalDateTime.of(2021, 2, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[2]));
@@ -222,24 +224,25 @@ public class EventPlanner {
         System.out.printf("%nThe least used location is \"%s\" with %d events.%n%n", leastUsedLocation.getName(), leastUsedLocationCount);
     }
 
-    private void printEvents(Event[] events) {
+    private void printEvents(Event[] eventsToPrint) {
         // Set formatting constants for printing
         final String WHITE_UNDERLINED = "\033[4m";
         final String RESET = "\033[0m";
 
         // Sort events by ID
-        events = ArrayHelper.sortById(events);
+        Arrays.sort(eventsToPrint, Comparator.comparingInt(Event::getID));
+        ;
 
         // Check if there are any events to print
-        if (events.length == 0) {
+        if (eventsToPrint.length == 0) {
             System.out.println("No events found.");
         } else {
             // Print the total count of events
-            System.out.printf("%d Events found:%n", events.length);
+            System.out.printf("%d Events found:%n", eventsToPrint.length);
 
             //Print events as table
             System.out.printf(WHITE_UNDERLINED + "%-4s    %-16s    %-16s    %-14s    %-14s" + RESET, "ID", "Title", "Location", "Start", "End");
-            for (Event event : events) {
+            for (Event event : eventsToPrint) {
                 System.out.printf("%n%s ", event.getInformation());
             }
             System.out.println("\n");

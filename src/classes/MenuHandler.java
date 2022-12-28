@@ -13,29 +13,27 @@ public class MenuHandler {
             "Show the least used location",
             "Exit"
     };
-    //Name convention for constants
     private final ValidationService VALIDATION_SERVICE;
-    //Name convention for constants
-    private final EventPlanner eventPlanner;
+    private final EventPlanner EVENT_PLANNER;
 
     public MenuHandler(EventPlanner eventPlanner) {
-        this.eventPlanner = eventPlanner;
-        VALIDATION_SERVICE = new ValidationService();
+        this.EVENT_PLANNER = eventPlanner;
+        this.VALIDATION_SERVICE = new ValidationService();
     }
 
     public void runMenu() {
         int selected = 0;
-        while (selected != 8){
+        while (selected != 8) {
             printMenu();
             selected = selectMenuItem();
-            switch (selected){
-                case 1 -> eventPlanner.createNewEvent();
-                case 2 -> eventPlanner.showAllEvents();
-                case 3 -> eventPlanner.showEventsByTitle();
-                case 4 -> eventPlanner.showEventsByLocation();
-                case 5 -> eventPlanner.showEventsByParticularDate();
-                case 6 -> eventPlanner.showMostUsedLocation();
-                case 7 -> eventPlanner.showLeastUsedLocation();
+            switch (selected) {
+                case 1 -> this.EVENT_PLANNER.createNewEvent();
+                case 2 -> this.EVENT_PLANNER.showAllEvents();
+                case 3 -> this.EVENT_PLANNER.showEventsByTitle();
+                case 4 -> this.EVENT_PLANNER.showEventsByLocation();
+                case 5 -> this.EVENT_PLANNER.showEventsByParticularDate();
+                case 6 -> this.EVENT_PLANNER.showMostUsedLocation();
+                case 7 -> this.EVENT_PLANNER.showLeastUsedLocation();
             }
         }
         System.out.println("Thank you for using the event planner!");

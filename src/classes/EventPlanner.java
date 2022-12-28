@@ -61,7 +61,9 @@ public class EventPlanner {
         return locations;
     }
 
-    public void createNewEvent(){
+    // #### Functions selectable in the menu ####
+
+    public void createNewEvent() {
         System.out.println("Create new event");
         // Get name of new Event
         String name = USER_INPUT_SERVICE.getStringFromUserWithMessage("Please enter the name of the event: ");
@@ -81,39 +83,54 @@ public class EventPlanner {
         Location location;
         Location[] locationsToSelect = locations;
 
+        // Check if location is free
+        // If not, check if other locations are free
+        // If this is not the case too, let the user select new start date
         do {
             System.out.println("Please select the location of the event:");
-            location = locationSelector(ArrayHelper.add(locationsToSelect, ONLINE_LOCATION));
+            location = locationSelector(locationsToSelect);
+
+            // Check if location is online
             if (location == ONLINE_LOCATION) {
                 locationAvailable = true;
             } else {
-                Event[] eventsOnLocation = eventsOnLocation(events, location);
+                // If Location is not online, check if it is free
+                Event[] eventsOnLocation = getEventsForOneLocation(events, location);
                 locationAvailable = eventsWhileDuration(eventsOnLocation, startDate, length, unit).length == 0;
             }
+            // If location is not free, check if other locations are free
             if (!locationAvailable) {
                 locationsToSelect = getFreeLocationsOnDate(startDate, length, unit);
-                if (locationsToSelect.length != 0) {
+
+                // If other locations are free, let the user select a new location
+                if (ArrayHelper.remove(locationsToSelect, ONLINE_LOCATION).length != 0) {
                     System.out.println("The selected location is not available on the selected date. Please select another location:");
                 } else {
+                    // If no other locations are free, let the user select a new date
                     System.out.println("There are no free locations on the selected date. Please select another date:");
                     startDate = VALIDATION_SERVICE.getValidLocalDateTimeFromUser("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
                 }
             }
+            // Repeat until a available location is selected
         } while (!locationAvailable);
 
-        // Add participants
+        // Get number of participants
         int participantsCount;
         if (location == ONLINE_LOCATION) {
+            // If location is online, let the user select the number of participants
             participantsCount = VALIDATION_SERVICE.getValidIntFromUser("Please enter the number of participants: ");
         } else {
+            // If location is not online, let the user select the number of participants with a max. of the max. capacity of the location
             participantsCount = VALIDATION_SERVICE.getValidIntInRangeFromUser("Please enter the number of participants: ", 1, location.getMaxCapacity());
         }
 
+        // Get names of participants
         String[] participants = new String[participantsCount];
         for (int i = 0; i < participantsCount; i++) {
             participants[i] = USER_INPUT_SERVICE.getStringFromUserWithMessage(String.format("Please enter the name of participant %d: ", i + 1));
         }
 
+        // Create new Event
         Event event;
         if (location == ONLINE_LOCATION) {
             event = new OnlineEvent(eventCounter, name, startDate, length, unit, participants, location);
@@ -121,6 +138,8 @@ public class EventPlanner {
         } else {
             event = new OnsiteEvent(eventCounter, name, startDate, length, unit, participants, location);
         }
+
+        // Increase eventCounter and add event to Event array
         events = ArrayHelper.add(events, event);
         eventCounter++;
 
@@ -128,39 +147,41 @@ public class EventPlanner {
     }
 
     public void showAllEvents() {
+        // Print the whole Event array
         printEvents(events);
         System.out.println();
     }
 
     public void showEventsByTitle() {
+        // Get the part of the title to search for
         String searchedPhrase = USER_INPUT_SERVICE.getStringFromUserWithMessage("Please enter the name of the searched event: ");
 
         Event[] selectedEvents = new Event[0];
+        // Check for each event if the title contains the searched phrase
         for (Event event : events) {
             if (event.getTitle().toLowerCase().contains(searchedPhrase.toLowerCase())) {
                 selectedEvents = ArrayHelper.add(selectedEvents, event);
             }
         }
+        // Print the selected events
         printEvents(selectedEvents);
     }
 
     public void showEventsByLocation() {
+        // Let the user select a location
         Location location = locationSelector(locations);
-        printEvents(eventsOnLocation(events, location));
+
+        // Get all events on the selected location and print them
+        Event[] eventsOnLocation = getEventsForOneLocation(events, location);
+        printEvents(eventsOnLocation);
     }
 
     public void showEventsByParticularDate() {
+        // Get the date to search for
         LocalDate searchedDate = VALIDATION_SERVICE.getValidLocalDateFromUser("Please enter the date of the searched events: (DD.MM.YYYY)");
-        Event[] allEvents = new Event[0];
-        for (Location location : locations) {
-            allEvents = ArrayHelper.addAll(
-                    eventsWhileDuration(
-                            eventsOnLocation(events, location),
-                            searchedDate.atStartOfDay(),
-                            1,
-                            Unit.DAY),
-                    allEvents);
-        }
+
+        // Get all events on the selected day and print them
+        Event[] allEvents = eventsWhileDuration(events, searchedDate.atStartOfDay(), 1, Unit.DAY);
         printEvents(allEvents);
     }
 
@@ -168,9 +189,9 @@ public class EventPlanner {
         Location mostUsedLocation = locations[0];
         int mostUsedLocationCount = 0;
         for (Location location : locations) {
-            if (eventsOnLocation(events, location).length > mostUsedLocationCount) {
+            if (getEventsForOneLocation(events, location).length > mostUsedLocationCount) {
                 mostUsedLocation = location;
-                mostUsedLocationCount = eventsOnLocation(events, location).length;
+                mostUsedLocationCount = getEventsForOneLocation(events, location).length;
             }
         }
         System.out.printf("%nThe most used location is %s with %d events.%n", mostUsedLocation.getName(), mostUsedLocationCount);
@@ -180,15 +201,13 @@ public class EventPlanner {
         Location leastUsedLocation = locations[0];
         int leastUsedLocationCount = Integer.MAX_VALUE;
         for (Location location : locations) {
-            if (eventsOnLocation(events, location).length < leastUsedLocationCount) {
+            if (getEventsForOneLocation(events, location).length < leastUsedLocationCount) {
                 leastUsedLocation = location;
-                leastUsedLocationCount = eventsOnLocation(events, location).length;
+                leastUsedLocationCount = getEventsForOneLocation(events, location).length;
             }
         }
         System.out.printf("%nThe least used location is %s with %d events.%n", leastUsedLocation.getName(), leastUsedLocationCount);
-
     }
-
 
     private void printEvents(Event[] events) {
         // Set formatting constants for printing
@@ -223,9 +242,9 @@ public class EventPlanner {
     private Location[] getFreeLocationsOnDate(LocalDateTime startDate, int length, Unit unit) {
         Location[] freeLocations = new Location[0];
         for (Location location : locations) {
-            Event[] eventsOnLocation = eventsOnLocation(events, location);
+            Event[] eventsOnLocation = getEventsForOneLocation(events, location);
             boolean locationAvailable = eventsWhileDuration(eventsOnLocation, startDate, length, unit).length == 0;
-            if (locationAvailable && location != ONLINE_LOCATION) {
+            if (locationAvailable) {
                 freeLocations = ArrayHelper.add(freeLocations, location);
             }
         }
@@ -253,7 +272,7 @@ public class EventPlanner {
         return eventsWhileDuration;
     }
 
-    private Event[] eventsOnLocation(Event[] events, Location location) {
+    private Event[] getEventsForOneLocation(Event[] events, Location location) {
         Event[] eventsOnLocation = new Event[0];
         if (location == ONLINE_LOCATION) {
             for (Event event : events) {

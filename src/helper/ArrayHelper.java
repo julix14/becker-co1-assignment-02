@@ -18,28 +18,30 @@ public class ArrayHelper {
         newArray[newArray.length - 1] = object;
         return newArray;
     }
-
-    public static Event[] addAll(Event[] array, Event[] objects){
-        Event[] newArray = copyAndGrowByN(array, objects.length);
-        System.arraycopy(objects, 0, newArray, array.length, objects.length);
-        return newArray;
-    }
-
-    private static Event[] copyAndGrowByN(Event[] array, int length) {
-        return Arrays.copyOf(array, array.length + length);
-    }
-
+    
     public static Event[] copyAndGrowBy1(Event[] array){
         return Arrays.copyOf(array, array.length + 1);
     }
 
-    public static Location[] copyAndGrowBy1(Location[] array){
+    public static Location[] copyAndGrowBy1(Location[] array) {
         return Arrays.copyOf(array, array.length + 1);
     }
 
-    public static Event[] sortById(Event[] array){
+    public static Event[] sortById(Event[] array) {
         Event[] sortedArray = Arrays.copyOf(array, array.length);
         Arrays.sort(sortedArray, Comparator.comparingInt(Event::getID));
         return sortedArray;
+    }
+
+    public static Location[] remove(Location[] array, Location object) {
+        Location[] newArray = new Location[array.length - 1];
+        int index = 0;
+        for (Location location : array) {
+            if (!location.equals(object)) {
+                newArray[index] = location;
+                index++;
+            }
+        }
+        return newArray;
     }
 }

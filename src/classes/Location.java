@@ -10,11 +10,11 @@ public class Location {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public int getMaxCapacity() {
-        return maxCapacity;
+        return this.maxCapacity;
     }
 
 }

@@ -11,6 +11,7 @@ public class Starter {
 
 
         System.out.println("Hello on the event planner!");
+        int locationCount = VALIDATION_SERVICE.getValidIntFromUser("For how many locations do you want to plan events? ");
 
         String demoDesicision = USER_INPUT_SERVICE.getStringFromUserWithMessage("Do you want to run the demo with predefined locations? (y/n): ");
 
@@ -23,6 +24,5 @@ public class Starter {
 
 
     }
-
 
 }

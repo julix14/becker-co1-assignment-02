@@ -13,41 +13,48 @@ public class MenuHandler {
             "Show the least used location",
             "Exit"
     };
-    private final ValidationService validationService = new ValidationService();
-
-    private final EventPlanner eventPlanner;
+    private final ValidationService VALIDATION_SERVICE;
+    private final EventPlanner EVENT_PLANNER;
 
     public MenuHandler(EventPlanner eventPlanner) {
-        this.eventPlanner = eventPlanner;
+        this.EVENT_PLANNER = eventPlanner;
+        this.VALIDATION_SERVICE = new ValidationService();
     }
 
     public void runMenu() {
-        int selected = 0;
-        while (selected != 8){
+        int selected;
+        do {
+            // Print the menu
             printMenu();
+
+            // Let the user select an option
             selected = selectMenuItem();
-            switch (selected){
-                case 1 -> eventPlanner.createNewEvent();
-                case 2 -> eventPlanner.showAllEvents();
-                case 3 -> eventPlanner.showEventsByTitle();
-                case 4 -> eventPlanner.showEventsByLocation();
-                case 5 -> eventPlanner.showEventsByParticularDate();
-                case 6 -> eventPlanner.showMostUsedLocation();
-                case 7 -> eventPlanner.showLeastUsedLocation();
+
+            // Execute the selected option
+            switch (selected) {
+                case 1 -> this.EVENT_PLANNER.createNewEvent();
+                case 2 -> this.EVENT_PLANNER.showAllEvents();
+                case 3 -> this.EVENT_PLANNER.showEventsByTitle();
+                case 4 -> this.EVENT_PLANNER.showEventsByLocation();
+                case 5 -> this.EVENT_PLANNER.showEventsByParticularDate();
+                case 6 -> this.EVENT_PLANNER.showMostUsedLocation();
+                case 7 -> this.EVENT_PLANNER.showLeastUsedLocation();
             }
-        }
+            // If the user selected 8, the program will exit
+        } while (selected != 8);
         System.out.println("Thank you for using the event planner!");
         System.out.println("Goodbye!");
         System.exit(0);
     }
 
     private void printMenu() {
+        // Print all MenuItems
         for (int i = 0; i < MENUITEMS.length; i++) {
-            System.out.printf("[%d] - %s%n", i + 1, MENUITEMS[i]);
+            System.out.printf("[%02d] - %s%n", i + 1, MENUITEMS[i]);
         }
     }
 
     private int selectMenuItem(){
-        return validationService.validateInputIsInRange("Please select a menu item: ", 1, MENUITEMS.length);
+        return VALIDATION_SERVICE.getValidIntInRangeFromUser("Please select a menu item: ", 1, MENUITEMS.length);
     }
 }

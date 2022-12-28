@@ -231,7 +231,6 @@ public class EventPlanner {
 
         // Sort events by ID
         Arrays.sort(eventsToPrint, Comparator.comparingInt(Event::getID));
-        ;
 
         // Check if there are any events to print
         if (eventsToPrint.length == 0) {

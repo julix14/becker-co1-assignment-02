@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class EventHelperService {
     public static LocalDateTime getEndOfEvent(Event event) {
-        Unit unit = event.getTimeUnit();
+        Unit unit = event.getUnit();
         long length = event.getLength();
         LocalDateTime start = event.getStart();
 

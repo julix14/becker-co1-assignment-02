@@ -11,6 +11,7 @@ public class Event {
     private long length;
     private Unit unit;
     private String[] participants;
+    private Location location;
 
     public Event(int ID, String title, LocalDateTime start, long length, Unit unit, String[] participants) {
         this.ID = ID;
@@ -39,12 +40,12 @@ public class Event {
     }
 
 
-    public Unit getTimeUnit() {
+    public Unit getUnit() {
         return unit;
     }
 
     public Location getLocation() {
-        return null;
+        return location;
     }
 
 }

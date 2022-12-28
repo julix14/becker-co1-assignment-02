@@ -11,6 +11,7 @@ public class MenuHandler {
             "Show all events on particular date",
             "Show the most used location",
             "Show the least used location",
+            "Exit"
     };
     private final ValidationService validationService = new ValidationService();
 

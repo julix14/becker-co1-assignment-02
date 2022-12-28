@@ -38,6 +38,10 @@ public class ValidationService {
         do {
             //Get a String Input from the user
             input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
+
+            // Remove leading zeros
+            input = input.replaceFirst("^0+(?!$)", "");
+
             String regexString = "[" + min + "-" + max + "]";
             //Check if the input is a number and in the range
             if (!input.matches("^[0-9]+$")) {
@@ -62,8 +66,8 @@ public class ValidationService {
             //Get a String Input from the user
             input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
 
-            //To assert the input is an Integer, try to parse it to an Integer
-            //If so, return the Integer
+            //To assert the input is an LocalDateTime, try to parse it to an LocalDateTime
+            //If so, return the LocalDateTime
             //If not, print an error message and ask for input again
             try {
                 return LocalDateTime.parse(input, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
@@ -84,8 +88,8 @@ public class ValidationService {
             //Get a String Input from the user
             input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
 
-            //To assert the input is an Integer, try to parse it to an Integer
-            //If so, return the Integer
+            //To assert the input is an LocalDate, try to parse it to an LocalDate
+            //If so, return the LocalDate
             //If not, print an error message and ask for input again
             try {
                 return LocalDate.parse(input, DateTimeFormatter.ofPattern("dd.MM.yyyy"));

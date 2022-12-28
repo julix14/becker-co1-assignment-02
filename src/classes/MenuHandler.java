@@ -22,10 +22,15 @@ public class MenuHandler {
     }
 
     public void runMenu() {
-        int selected = 0;
-        while (selected != 8) {
+        int selected;
+        do {
+            // Print the menu
             printMenu();
+
+            // Let the user select an option
             selected = selectMenuItem();
+
+            // Execute the selected option
             switch (selected) {
                 case 1 -> this.EVENT_PLANNER.createNewEvent();
                 case 2 -> this.EVENT_PLANNER.showAllEvents();
@@ -35,15 +40,17 @@ public class MenuHandler {
                 case 6 -> this.EVENT_PLANNER.showMostUsedLocation();
                 case 7 -> this.EVENT_PLANNER.showLeastUsedLocation();
             }
-        }
+            // If the user selected 8, the program will exit
+        } while (selected != 8);
         System.out.println("Thank you for using the event planner!");
         System.out.println("Goodbye!");
         System.exit(0);
     }
 
     private void printMenu() {
+        // Print all MenuItems
         for (int i = 0; i < MENUITEMS.length; i++) {
-            System.out.printf("[%d] - %s%n", i + 1, MENUITEMS[i]);
+            System.out.printf("[%02d] - %s%n", i + 1, MENUITEMS[i]);
         }
     }
 

@@ -14,12 +14,13 @@ public class MenuHandler {
             "Exit"
     };
     //Name convention for constants
-    private final ValidationService validationService = new ValidationService();
+    private final ValidationService VALIDATION_SERVICE;
     //Name convention for constants
     private final EventPlanner eventPlanner;
 
     public MenuHandler(EventPlanner eventPlanner) {
         this.eventPlanner = eventPlanner;
+        VALIDATION_SERVICE = new ValidationService();
     }
 
     public void runMenu() {
@@ -49,6 +50,6 @@ public class MenuHandler {
     }
 
     private int selectMenuItem(){
-        return validationService.getValidIntInRangeFromUser("Please select a menu item: ", 1, MENUITEMS.length);
+        return VALIDATION_SERVICE.getValidIntInRangeFromUser("Please select a menu item: ", 1, MENUITEMS.length);
     }
 }

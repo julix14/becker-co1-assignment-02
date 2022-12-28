@@ -5,25 +5,28 @@ import classes.event.OnlineEvent;
 import classes.event.OnsiteEvent;
 import classes.event.Unit;
 import helper.ArrayHelper;
-import helper.EventHelperService;
 import helper.input.UserInputService;
 import helper.validation.ValidationService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class EventPlanner {
     private Location[] locations;
-    private final UserInputService USERINPUTSERVICE = new UserInputService();
-    private final ValidationService VALIDATIONSERVICE = new ValidationService();
+    private final UserInputService USER_INPUT_SERVICE;
+    private final ValidationService VALIDATION_SERVICE;
 
-    private int eventCount = 0;
+    private int eventCounter;
 
     private Event[] events = new Event[0];
+    private final Location ONLINE_LOCATION;
 
-    //Ich glaube Mohammed wollte die initialisierung immer im constructur
     public EventPlanner(int locationCount) {
+        USER_INPUT_SERVICE = new UserInputService();
+        VALIDATION_SERVICE = new ValidationService();
+        eventCounter = 0;
+        ONLINE_LOCATION = new Location("Online", -1);
+
         //locations = setupLocations(locationCount + 1);
         locations = demoLocations();
     }
@@ -32,11 +35,11 @@ public class EventPlanner {
         System.out.printf("%nPlease enter the name and max capacity of %d locations:", locationCount - 1);
         this.locations = new Location[locationCount];
         for (int i = 0; i < locationCount - 1; i++) {
-            String name = USERINPUTSERVICE.getStringFromUserWithMessage(String.format("%nPlease enter the name of location %d: ", i + 1));
-            int maxCapacity = VALIDATIONSERVICE.getValidIntFromUser(String.format("Please enter the max. capacity of %s: ", name));
+            String name = USER_INPUT_SERVICE.getStringFromUserWithMessage(String.format("%nPlease enter the name of location %d: ", i + 1));
+            int maxCapacity = VALIDATION_SERVICE.getValidIntFromUser(String.format("Please enter the max. capacity of %s: ", name));
             locations[i] = new Location(name, maxCapacity);
         }
-        locations[locationCount - 1] = new Location("Online", -1);
+        locations[locationCount - 1] = ONLINE_LOCATION;
         return locations;
     }
 
@@ -61,86 +64,65 @@ public class EventPlanner {
     public void createNewEvent(){
         System.out.println("Create new event");
         // Get name of new Event
-        String name = USERINPUTSERVICE.getStringFromUserWithMessage("Please enter the name of the event: ");
+        String name = USER_INPUT_SERVICE.getStringFromUserWithMessage("Please enter the name of the event: ");
 
         // Get Start of new Event
-        LocalDateTime startDate = VALIDATIONSERVICE.getValidLocalDateTimeFromUser("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
+        LocalDateTime startDate = VALIDATION_SERVICE.getValidLocalDateTimeFromUser("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
 
-        //Warum long? Int sollte doch eigentlich ausreichen oder?
         // Get length of new Event
-        int length = VALIDATIONSERVICE.getValidIntFromUser("Please enter the length of the event: ");
+        int length = VALIDATION_SERVICE.getValidIntFromUser("Please enter the length of the event: ");
 
         // Get TimeUnit of new Event
-        int timeUnitPlace = VALIDATIONSERVICE.getValidIntInRangeFromUser("Please enter the time unit of the event: (1 = Hours, 2 = Days, 3 = Months)", 1, 3);
+        int timeUnitPlace = VALIDATION_SERVICE.getValidIntInRangeFromUser("Please enter the time unit of the event: (1 = Hours, 2 = Days, 3 = Months)", 1, 3);
         Unit unit = Unit.values()[timeUnitPlace - 1];
 
         // Select Location of new Event
-        System.out.println("Please select the location of the event:");
-        Location location = locationSelector(locations);
-
-        // Check if location is available
-        // Disable Check if Online Event#
-
-        //Irgendwie ist das wie du locationAvailable gelöst hast ziemlich kompliziert. Würde das in eine do while schleife tuen.
-        //Irgendwie doppelt sich da auch einiges. Vielleicht kannst du das noch simpler machen, sodass man es besser versteht
         boolean locationAvailable;
-        if (location.getName().equals("Online")){
-            locationAvailable = true;
-        } else {
-            //Diese Zeile ist einfach nur mies zum lesen. Würde das aufteilen
-            locationAvailable = EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), startDate, length, unit).length == 0;
-        }
+        Location location;
+        Location[] locationsToSelect = locations;
 
-        while(!locationAvailable){
-            Location[] freeLocations = getFreeLocationsOnDate(startDate, length, unit);
-            if (freeLocations.length != 0){
-                System.out.println("The selected location is not available on the selected date. Please select another location:");
-                location = locationSelector(freeLocations);
-            } else {
-                System.out.println("There are no free locations on the selected date. Please select another date:");
-                startDate = VALIDATIONSERVICE.getValidLocalDateTimeFromUser("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
-            }
-            if (location.getName().equals("Online")){
+        do {
+            System.out.println("Please select the location of the event:");
+            location = locationSelector(ArrayHelper.add(locationsToSelect, ONLINE_LOCATION));
+            if (location == ONLINE_LOCATION) {
                 locationAvailable = true;
             } else {
-                locationAvailable = EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), startDate, length, unit).length == 0;
+                Event[] eventsOnLocation = eventsOnLocation(events, location);
+                locationAvailable = eventsWhileDuration(eventsOnLocation, startDate, length, unit).length == 0;
             }
-        }
+            if (!locationAvailable) {
+                locationsToSelect = getFreeLocationsOnDate(startDate, length, unit);
+                if (locationsToSelect.length != 0) {
+                    System.out.println("The selected location is not available on the selected date. Please select another location:");
+                } else {
+                    System.out.println("There are no free locations on the selected date. Please select another date:");
+                    startDate = VALIDATION_SERVICE.getValidLocalDateTimeFromUser("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
+                }
+            }
+        } while (!locationAvailable);
 
         // Add participants
         int participantsCount;
-        if (location.getName().equals("Online")){
-            participantsCount = VALIDATIONSERVICE.getValidIntFromUser("Please enter the number of participants: ");
+        if (location == ONLINE_LOCATION) {
+            participantsCount = VALIDATION_SERVICE.getValidIntFromUser("Please enter the number of participants: ");
         } else {
-            participantsCount = VALIDATIONSERVICE.getValidIntInRangeFromUser("Please enter the number of participants: ", 1, location.getMaxCapacity());
+            participantsCount = VALIDATION_SERVICE.getValidIntInRangeFromUser("Please enter the number of participants: ", 1, location.getMaxCapacity());
         }
 
         String[] participants = new String[participantsCount];
         for (int i = 0; i < participantsCount; i++) {
-            participants[i] = USERINPUTSERVICE.getStringFromUserWithMessage(String.format("Please enter the name of participant %d: ", i + 1));
+            participants[i] = USER_INPUT_SERVICE.getStringFromUserWithMessage(String.format("Please enter the name of participant %d: ", i + 1));
         }
 
-        // Create Event and add to events-list
-        //Kannst du stark vereinfachen
-        /*
         Event event;
-        if (location.getName().equals("Online")) {
-            event = new OnlineEvent(eventCount, name, startDate, length, unit, participants, location);
+        if (location == ONLINE_LOCATION) {
+            event = new OnlineEvent(eventCounter, name, startDate, length, unit, participants, location);
 
         } else {
-            event = new OnsiteEvent(eventCount, name, startDate, length, unit, participants, location);
+            event = new OnsiteEvent(eventCounter, name, startDate, length, unit, participants, location);
         }
         events = ArrayHelper.add(events, event);
-        eventCount++;
-         */
-
-        Event event;
-        if (location.getName().equals("Online")) {
-            events = ArrayHelper.add(events, new OnlineEvent(eventCount++, name, startDate, length, unit, participants, location));
-            return;
-        }
-
-        events = ArrayHelper.add(events, new OnsiteEvent(eventCount++, name, startDate, length, unit, participants, location));
+        eventCounter++;
 
         System.out.println("Event created successfully!");
     }
@@ -151,12 +133,11 @@ public class EventPlanner {
     }
 
     public void showEventsByTitle() {
-        //Würde die Variable irgendwie umbennen zu searchedNameLowerCase oder das in zwei Zeilen schreiben
-        String searchedName = USERINPUTSERVICE.getStringFromUserWithMessage("Please enter the name of the searched event: ").toLowerCase();
+        String searchedPhrase = USER_INPUT_SERVICE.getStringFromUserWithMessage("Please enter the name of the searched event: ");
 
         Event[] selectedEvents = new Event[0];
         for (Event event : events) {
-            if (event.getTitle().toLowerCase().contains(searchedName)) {
+            if (event.getTitle().toLowerCase().contains(searchedPhrase.toLowerCase())) {
                 selectedEvents = ArrayHelper.add(selectedEvents, event);
             }
         }
@@ -165,16 +146,16 @@ public class EventPlanner {
 
     public void showEventsByLocation() {
         Location location = locationSelector(locations);
-        printEvents(EventHelperService.eventsOnLocation(events, location));
+        printEvents(eventsOnLocation(events, location));
     }
 
     public void showEventsByParticularDate() {
-        LocalDate searchedDate = VALIDATIONSERVICE.getValidLocalDateFromUser("Please enter the date of the searched events: (DD.MM.YYYY)");
+        LocalDate searchedDate = VALIDATION_SERVICE.getValidLocalDateFromUser("Please enter the date of the searched events: (DD.MM.YYYY)");
         Event[] allEvents = new Event[0];
         for (Location location : locations) {
             allEvents = ArrayHelper.addAll(
-                    EventHelperService.eventsWhileDuration(
-                            EventHelperService.eventsOnLocation(events, location),
+                    eventsWhileDuration(
+                            eventsOnLocation(events, location),
                             searchedDate.atStartOfDay(),
                             1,
                             Unit.DAY),
@@ -187,9 +168,9 @@ public class EventPlanner {
         Location mostUsedLocation = locations[0];
         int mostUsedLocationCount = 0;
         for (Location location : locations) {
-            if (EventHelperService.eventsOnLocation(events, location).length > mostUsedLocationCount){
+            if (eventsOnLocation(events, location).length > mostUsedLocationCount) {
                 mostUsedLocation = location;
-                mostUsedLocationCount = EventHelperService.eventsOnLocation(events, location).length;
+                mostUsedLocationCount = eventsOnLocation(events, location).length;
             }
         }
         System.out.printf("%nThe most used location is %s with %d events.%n", mostUsedLocation.getName(), mostUsedLocationCount);
@@ -199,9 +180,9 @@ public class EventPlanner {
         Location leastUsedLocation = locations[0];
         int leastUsedLocationCount = Integer.MAX_VALUE;
         for (Location location : locations) {
-            if (EventHelperService.eventsOnLocation(events, location).length < leastUsedLocationCount){
+            if (eventsOnLocation(events, location).length < leastUsedLocationCount) {
                 leastUsedLocation = location;
-                leastUsedLocationCount = EventHelperService.eventsOnLocation(events, location).length;
+                leastUsedLocationCount = eventsOnLocation(events, location).length;
             }
         }
         System.out.printf("%nThe least used location is %s with %d events.%n", leastUsedLocation.getName(), leastUsedLocationCount);
@@ -209,12 +190,10 @@ public class EventPlanner {
     }
 
 
-    private void printEvents(Event[] events){
+    private void printEvents(Event[] events) {
         // Set formatting constants for printing
-        String WHITE_UNDERLINED = "\033[4m";
-        String RESET = "\033[0m";
-        //Nicht final also name convention
-        DateTimeFormatter CUSTOMFORMAT = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
+        final String WHITE_UNDERLINED = "\033[4m";
+        final String RESET = "\033[0m";
 
         // Sort events by ID
         events = ArrayHelper.sortById(events);
@@ -226,7 +205,7 @@ public class EventPlanner {
             System.out.printf("%d Events found:%n", events.length);
             System.out.printf(WHITE_UNDERLINED + "  %-4s    %-16s    %-10s    %-14s    %-14s" + RESET, "ID", "Title", "Location", "Start", "End");
             for (Event event : events) {
-                System.out.printf("%n  [%02d]    %-16s    %-10s    %-14s    %-14s ", event.getID(), event.getTitle(), event.getLocation().getName(), event.getStart().format(CUSTOMFORMAT), EventHelperService.getEndOfEvent(event).format(CUSTOMFORMAT));
+                System.out.printf("%n  %s ", event.getInformation());
             }
             System.out.println("\n");
         }
@@ -237,18 +216,59 @@ public class EventPlanner {
         for (int i = 0; i < locations.length; i++) {
             System.out.printf("%d: %s%n", i+1, locations[i].getName());
         }
-        int locationPlace = VALIDATIONSERVICE.getValidIntInRangeFromUser("Please enter the number of the location: ", 1, locations.length);
+        int locationPlace = VALIDATION_SERVICE.getValidIntInRangeFromUser("Please enter the number of the location: ", 1, locations.length);
         return locations[locationPlace-1];
     }
 
     private Location[] getFreeLocationsOnDate(LocalDateTime startDate, int length, Unit unit) {
         Location[] freeLocations = new Location[0];
         for (Location location : locations) {
-            if (EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), startDate, length, unit).length == 0) {
+            Event[] eventsOnLocation = eventsOnLocation(events, location);
+            boolean locationAvailable = eventsWhileDuration(eventsOnLocation, startDate, length, unit).length == 0;
+            if (locationAvailable && location != ONLINE_LOCATION) {
                 freeLocations = ArrayHelper.add(freeLocations, location);
             }
         }
         return freeLocations;
+    }
+
+
+    private LocalDateTime getEndOfEvent(LocalDateTime start, Unit unit, int length) {
+        return switch (unit) {
+            case HOUR -> start.plusHours(length);
+            case DAY -> start.plusDays(length);
+            case MONTH -> start.plusMonths(length);
+        };
+    }
+
+    private Event[] eventsWhileDuration(Event[] events, LocalDateTime date, int length, Unit unit) {
+        LocalDateTime endDate = getEndOfEvent(date, unit, length);
+        Event[] eventsWhileDuration = new Event[0];
+
+        for (Event event : events) {
+            if (!(event.getEndOfEvent().isBefore(date) || (event.getStart().isAfter(endDate)))) {
+                eventsWhileDuration = ArrayHelper.add(eventsWhileDuration, event);
+            }
+        }
+        return eventsWhileDuration;
+    }
+
+    private Event[] eventsOnLocation(Event[] events, Location location) {
+        Event[] eventsOnLocation = new Event[0];
+        if (location == ONLINE_LOCATION) {
+            for (Event event : events) {
+                if (event.getClass() == OnlineEvent.class) {
+                    eventsOnLocation = ArrayHelper.add(eventsOnLocation, event);
+                }
+            }
+        } else {
+            for (Event event : events) {
+                if (event.getClass() == OnsiteEvent.class && ((OnsiteEvent) event).getLocation() == location) {
+                    eventsOnLocation = ArrayHelper.add(eventsOnLocation, event);
+                }
+            }
+        }
+        return eventsOnLocation;
     }
 
 }

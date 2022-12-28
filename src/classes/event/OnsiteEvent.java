@@ -3,6 +3,7 @@ package classes.event;
 import classes.Location;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class OnsiteEvent extends Event {
     //Warum ist das hier nicht final?
@@ -14,7 +15,13 @@ public class OnsiteEvent extends Event {
         this.location = location;
     }
 
-    public Location getLocation() {
-        return this.location;
+    public String getInformation() {
+        final DateTimeFormatter CUSTOM_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
+        return String.format("[%02d]    %-16s    %-10s    %-14s    %-14s ", this.getID(), this.getTitle(), this.getStart().format(CUSTOM_FORMAT), this.getEndOfEvent().format(CUSTOM_FORMAT), this.location);
     }
+
+    public Location getLocation() {
+        return location;
+    }
+
 }

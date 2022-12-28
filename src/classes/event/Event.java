@@ -1,17 +1,14 @@
 package classes.event;
 
-import classes.Location;
-
 import java.time.LocalDateTime;
 
-public class Event {
+public abstract class Event {
     private final int ID;
     private String title;
     private LocalDateTime start;
     private int length;
     private Unit unit;
     private String[] participants;
-    private Location location;
 
     public Event(int ID, String title, LocalDateTime start, int length, Unit unit, String[] participants) {
         this.ID = ID;
@@ -44,8 +41,14 @@ public class Event {
         return unit;
     }
 
-    public Location getLocation() {
-        return location;
+    public abstract String getInformation();
+
+    public LocalDateTime getEndOfEvent() {
+        return switch (this.unit) {
+            case HOUR -> this.start.plusHours(this.length);
+            case DAY -> this.start.plusDays(this.length);
+            case MONTH -> this.start.plusMonths(this.length);
+        };
     }
 
 }

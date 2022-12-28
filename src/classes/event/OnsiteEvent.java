@@ -5,6 +5,7 @@ import classes.Location;
 import java.time.LocalDateTime;
 
 public class OnsiteEvent extends Event {
+    //Warum ist das hier nicht final?
     private Location location;
 
 

@@ -15,13 +15,16 @@ import java.time.format.DateTimeFormatter;
 
 public class EventPlanner {
     private Location[] locations;
+    //Name convention for constants
     private final UserInputService userInputService = new UserInputService();
+    //Name convention for constants
     private final ValidationService validationService = new ValidationService();
 
     private int eventCount = 0;
 
     private Event[] events = new Event[0];
 
+    //Ich glaube Mohammed wollte die initialisierung immer im constructur
     public EventPlanner(int locationCount){
         //locations = setupLocations(locationCount + 1);
         locations = demoLocations();
@@ -62,9 +65,13 @@ public class EventPlanner {
         // Get name of new Event
         String name = userInputService.getStringFromUserWithMessage("Please enter the name of the event: ");
 
+        //Der Name passt irgendwie nicht zu dem, was die Funktion macht
+        //Du holst dir ja ein Datum von user und validierst nichts. Ich würde das ganze über den userInputService machen, welcher dann die Validation aufruft
+        //So in etwas wahrscheinlich wie in line 66
         // Get Start of new Event
         LocalDateTime startDate = validationService.validateInputIsLocalDateTime("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
 
+        //Warum long? Int sollte doch eigentlich ausreichen oder?
         // Get length of new Event
         long length = validationService.validateInputIsLong("Please enter the length of the event: ");
 
@@ -78,10 +85,14 @@ public class EventPlanner {
 
         // Check if location is available
         // Disable Check if Online Event#
+
+        //Irgendwie ist das wie du locationAvailable gelöst hast ziemlich kompliziert. Würde das in eine do while schleife tuen.
+        //Irgendwie doppelt sich da auch einiges. Vielleicht kannst du das noch simpler machen, sodass man es besser versteht
         boolean locationAvailable;
         if (location.getName().equals("Online")){
             locationAvailable = true;
         } else {
+            //Diese Zeile ist einfach nur mies zum lesen. Würde das aufteilen
             locationAvailable = EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), startDate, length, unit).length == 0;
         }
 
@@ -115,6 +126,8 @@ public class EventPlanner {
         }
 
         // Create Event and add to events-list
+        //Kannst du stark vereinfachen
+        /*
         Event event;
         if (location.getName().equals("Online")) {
             event = new OnlineEvent(eventCount, name, startDate, length, unit, participants, location);
@@ -124,6 +137,15 @@ public class EventPlanner {
         }
         events = ArrayHelper.add(events, event);
         eventCount++;
+         */
+
+        Event event;
+        if (location.getName().equals("Online")) {
+            events = ArrayHelper.add(events, new OnlineEvent(eventCount++, name, startDate, length, unit, participants, location));
+            return;
+        }
+
+        events = ArrayHelper.add(events, new OnsiteEvent(eventCount++, name, startDate, length, unit, participants, location));
 
         System.out.println("Event created successfully!");
     }
@@ -134,6 +156,7 @@ public class EventPlanner {
     }
 
     public void showEventsByTitle() {
+        //Würde die Variable irgendwie umbennen zu searchedNameLowerCase oder das in zwei Zeilen schreiben
         String searchedName = userInputService.getStringFromUserWithMessage("Please enter the name of the searched event: ").toLowerCase();
 
         Event[] selectedEvents = new Event[0];
@@ -154,7 +177,13 @@ public class EventPlanner {
         LocalDate searchedDate = validationService.validateInputIsLocalDate("Please enter the date of the searched events: (DD.MM.YYYY)");
         Event[] allEvents = new Event[0];
         for (Location location : locations) {
-            allEvents = ArrayHelper.addAll(EventHelperService.eventsWhileDuration(EventHelperService.eventsOnLocation(events, location), searchedDate.atStartOfDay(), 1, Unit.DAY), allEvents);
+            allEvents = ArrayHelper.addAll(
+                    EventHelperService.eventsWhileDuration(
+                            EventHelperService.eventsOnLocation(events, location),
+                            searchedDate.atStartOfDay(),
+                            1,
+                            Unit.DAY),
+                    allEvents);
         }
         printEvents(allEvents);
     }
@@ -189,6 +218,7 @@ public class EventPlanner {
         // Set formatting constants for printing
         String WHITE_UNDERLINED = "\033[4m";
         String RESET = "\033[0m";
+        //Nicht final also name convention
         DateTimeFormatter CUSTOMFORMAT = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
 
         // Sort events by ID

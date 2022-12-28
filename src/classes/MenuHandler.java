@@ -13,8 +13,9 @@ public class MenuHandler {
             "Show the least used location",
             "Exit"
     };
+    //Name convention for constants
     private final ValidationService validationService = new ValidationService();
-
+    //Name convention for constants
     private final EventPlanner eventPlanner;
 
     public MenuHandler(EventPlanner eventPlanner) {

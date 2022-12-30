@@ -51,4 +51,8 @@ public abstract class Event {
         };
     }
 
+    public String[] getParticipants() {
+        return participants;
+    }
+
 }

@@ -40,6 +40,7 @@ public class MenuHandler {
             }
             // If the user selected 8, the program will exit
         } while (selected != 8);
+        // Print a goodbye messages
         System.out.println("Thank you for using the event planner!");
         System.out.println("Goodbye!");
         System.exit(0);
@@ -53,6 +54,7 @@ public class MenuHandler {
     }
 
     private int selectMenuItem(){
+        // Ask the user to select an option from the menu
         return UserInputService.getValidIntInRangeFromUser("Please select a menu item: ", 1, MENU_ITEMS.length);
     }
 }

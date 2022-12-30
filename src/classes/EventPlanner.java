@@ -52,7 +52,7 @@ public class EventPlanner {
     // Just for testing purposes
     private Location[] demoLocations() {
         Location[] locations = new Location[3];
-        locations[0] = new Location("Online", -1);
+        locations[0] = ONLINE_LOCATION;
         locations[1] = new Location("Room 1", 10);
         locations[2] = new Location("Room 2", 20);
 
@@ -239,7 +239,7 @@ public class EventPlanner {
             System.out.printf("%d Events found:%n", eventsToPrint.length);
 
             //Print events as table
-            System.out.printf(WHITE_UNDERLINED + "%-4s    %-16s    %-16s    %-14s    %-14s" + RESET, "ID", "Title", "Location", "Start", "End");
+            System.out.printf(WHITE_UNDERLINED + "%-4s    %-16s    %-16s    %-14s    %-14s    %3s" + RESET, "ID", "Title", "Location", "Start", "End", "ParticipantsCount");
             for (Event event : eventsToPrint) {
                 System.out.printf("%n%s ", event.getInformation());
             }
@@ -258,9 +258,7 @@ public class EventPlanner {
     }
 
 
-
-
-    private LocalDateTime getEndOfEvent(LocalDateTime start, Unit unit, int length) {
+    private LocalDateTime calculateEndOfEvent(LocalDateTime start, Unit unit, int length) {
         // Calculate the end of the event based on the start date, the unit and the length
         return switch (unit) {
             case HOUR -> start.plusHours(length);
@@ -270,7 +268,7 @@ public class EventPlanner {
     }
 
     private Event[] eventsWhileDuration(Event[] events, LocalDateTime date, int length, Unit unit) {
-        LocalDateTime endDate = getEndOfEvent(date, unit, length);
+        LocalDateTime endDate = calculateEndOfEvent(date, unit, length);
         Event[] eventsWhileDuration = new Event[0];
         // Go through all events and check if the event is during the calculated duration
         for (Event event : events) {

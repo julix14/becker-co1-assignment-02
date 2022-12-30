@@ -267,12 +267,21 @@ public class EventPlanner {
         };
     }
 
-    private Event[] eventsWhileDuration(Event[] events, LocalDateTime date, int length, Unit unit) {
-        LocalDateTime endDate = calculateEndOfEvent(date, unit, length);
+    private Event[] eventsWhileDuration(Event[] events, LocalDateTime newEventStart, int length, Unit unit) {
+        LocalDateTime newEventEnd = calculateEndOfEvent(newEventStart, unit, length);
         Event[] eventsWhileDuration = new Event[0];
         // Go through all events and check if the event is during the calculated duration
         for (Event event : events) {
-            if (!(event.getEndOfEvent().isBefore(date) || (event.getStart().isAfter(endDate)))) {
+            if (
+                // Check if the current event starts before the new event starts && the current event ends after the new event starts
+                    event.getStart().isBefore(newEventStart) && event.getEndOfEvent().isAfter(newEventStart) ||
+                            // Check if the current event starts before the new event ends && the current event ends after the new event ends
+                            event.getStart().isBefore(newEventEnd) && event.getEndOfEvent().isAfter(newEventEnd) ||
+                            // Check if the new event starts before the current event starts && the new event end after the current event start
+                            newEventStart.isBefore(event.getStart()) && newEventEnd.isAfter(event.getEndOfEvent()) ||
+                            // Check if the current event starts before the new event starts && the current event ends after the new event ends
+                            event.getStart().isBefore(newEventStart) && event.getEndOfEvent().isAfter(newEventEnd)
+            ) {
                 eventsWhileDuration = ArrayHelper.add(eventsWhileDuration, event);
             }
         }

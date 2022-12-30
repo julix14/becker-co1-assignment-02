@@ -1,21 +1,27 @@
-package helper.validation;
-
-import helper.input.UserInputService;
+package helper;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Scanner;
 
-public class ValidationService {
-    private final UserInputService USERINPUTSERVICE = new UserInputService();
+public class UserInputService {
+    //Create a Scanner object to read input from the user
+    private static final Scanner SCANNER = new Scanner(System.in);
 
-    public int getValidIntFromUser(String message) {
+    //Get a String Input from the user after printing a message
+    public static String getStringFromUserWithMessage(String message) {
+        System.out.println(message);
+        return SCANNER.nextLine();
+    }
+
+    public static int getValidIntFromUser(String message) {
         String input;
         int tries = 0;
         do {
             //Get a String Input from the user
-            input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
+            input = getStringFromUserWithMessage(message);
 
             //To assert the input is an Integer, try to parse it to an Integer
             //If so, return the Integer
@@ -32,12 +38,12 @@ public class ValidationService {
         return -1;
     }
 
-    public int getValidIntInRangeFromUser(String message, int min, int max) {
+    public static int getValidIntInRangeFromUser(String message, int min, int max) {
         String input;
         int tries = 0;
         do {
             //Get a String Input from the user
-            input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
+            input = getStringFromUserWithMessage(message);
 
             // Remove leading zeros
             input = input.replaceFirst("^0+(?!$)", "");
@@ -51,7 +57,7 @@ public class ValidationService {
             } else {
                 return Integer.parseInt(input);
             }
-           tries++;
+            tries++;
         }while (tries < 3);
 
         System.out.println("You have entered an invalid input 3 times. Exiting the program");
@@ -59,12 +65,12 @@ public class ValidationService {
         return -1;
     }
 
-    public LocalDateTime getValidLocalDateTimeFromUser(String message) {
+    public static LocalDateTime getValidLocalDateTimeFromUser(String message) {
         String input;
         int tries = 0;
         do {
             //Get a String Input from the user
-            input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
+            input = getStringFromUserWithMessage(message);
 
             //To assert the input is an LocalDateTime, try to parse it to an LocalDateTime
             //If so, return the LocalDateTime
@@ -81,12 +87,12 @@ public class ValidationService {
         return null;
     }
 
-    public LocalDate getValidLocalDateFromUser(String message) {
+    public static LocalDate getValidLocalDateFromUser(String message) {
         String input;
         int tries = 0;
         do {
             //Get a String Input from the user
-            input = USERINPUTSERVICE.getStringFromUserWithMessage(message);
+            input = getStringFromUserWithMessage(message);
 
             //To assert the input is an LocalDate, try to parse it to an LocalDate
             //If so, return the LocalDate
@@ -102,5 +108,4 @@ public class ValidationService {
         System.exit(1);
         return null;
     }
-
 }

@@ -5,8 +5,7 @@ import classes.event.OnlineEvent;
 import classes.event.OnsiteEvent;
 import classes.event.Unit;
 import helper.ArrayHelper;
-import helper.input.UserInputService;
-import helper.validation.ValidationService;
+import helper.UserInputService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,43 +14,42 @@ import java.util.Comparator;
 
 public class EventPlanner {
     private Location[] locations;
-    private final UserInputService USER_INPUT_SERVICE;
-    private final ValidationService VALIDATION_SERVICE;
 
     private int eventCounter;
 
     private Event[] events = new Event[0];
     private final Location ONLINE_LOCATION;
 
+    // Primary constructor
     public EventPlanner(int locationCount) {
-        USER_INPUT_SERVICE = new UserInputService();
-        VALIDATION_SERVICE = new ValidationService();
         eventCounter = 0;
         ONLINE_LOCATION = new Location("Online", -1);
 
         locations = setupLocations(locationCount + 1);
     }
 
+    //Second constructor for testing purposes
     public EventPlanner() {
-        USER_INPUT_SERVICE = new UserInputService();
-        VALIDATION_SERVICE = new ValidationService();
         eventCounter = 0;
         ONLINE_LOCATION = new Location("Online", -1);
         locations = demoLocations();
     }
 
+    // Setup locations for the event planner
     private Location[] setupLocations(int locationCount) {
         System.out.printf("%nPlease enter the name and max capacity of %d locations:", locationCount - 1);
         this.locations = new Location[locationCount];
         for (int i = 0; i < locationCount - 1; i++) {
-            String name = USER_INPUT_SERVICE.getStringFromUserWithMessage(String.format("%nPlease enter the name of location %d: ", i + 1));
-            int maxCapacity = VALIDATION_SERVICE.getValidIntFromUser(String.format("Please enter the max. capacity of %s: ", name));
+            String name = UserInputService.getStringFromUserWithMessage(String.format("%nPlease enter the name of location %d: ", i + 1));
+            int maxCapacity = UserInputService.getValidIntFromUser(String.format("Please enter the max. capacity of %s: ", name));
             locations[i] = new Location(name, maxCapacity);
         }
         locations[locationCount - 1] = ONLINE_LOCATION;
         return locations;
     }
 
+    // Setup demo locations for the event planner
+    // Just for testing purposes
     private Location[] demoLocations() {
         Location[] locations = new Location[3];
         locations[0] = new Location("Online", -1);
@@ -75,16 +73,16 @@ public class EventPlanner {
     public void createNewEvent() {
         System.out.println("Create new event");
         // Get name of new Event
-        String name = USER_INPUT_SERVICE.getStringFromUserWithMessage("Please enter the name of the event: ");
+        String name = UserInputService.getStringFromUserWithMessage("Please enter the name of the event: ");
 
         // Get Start of new Event
-        LocalDateTime startDate = VALIDATION_SERVICE.getValidLocalDateTimeFromUser("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
+        LocalDateTime startDate = UserInputService.getValidLocalDateTimeFromUser("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
 
         // Get length of new Event
-        int length = VALIDATION_SERVICE.getValidIntFromUser("Please enter the length of the event: ");
+        int length = UserInputService.getValidIntFromUser("Please enter the length of the event: ");
 
         // Get TimeUnit of new Event
-        int timeUnitPlace = VALIDATION_SERVICE.getValidIntInRangeFromUser("Please enter the time unit of the event: (1 = Hours, 2 = Days, 3 = Months)", 1, 3);
+        int timeUnitPlace = UserInputService.getValidIntInRangeFromUser("Please enter the time unit of the event: (1 = Hours, 2 = Days, 3 = Months)", 1, 3);
         Unit unit = Unit.values()[timeUnitPlace - 1];
 
         // Select Location of new Event
@@ -117,26 +115,26 @@ public class EventPlanner {
                 } else {
                     // If no other locations are free, let the user select a new date
                     System.out.println("There are no free locations on the selected date. Please select another date:");
-                    startDate = VALIDATION_SERVICE.getValidLocalDateTimeFromUser("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
+                    startDate = UserInputService.getValidLocalDateTimeFromUser("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
                 }
             }
-            // Repeat until a available location is selected
+            // Repeat until an available location is selected
         } while (!locationAvailable);
 
         // Get number of participants
         int participantsCount;
         if (location == ONLINE_LOCATION) {
-            // If location is online, let the user select the number of participants
-            participantsCount = VALIDATION_SERVICE.getValidIntFromUser("Please enter the number of participants: ");
+            // If location is online, let the user select the number of participants, because there is no limit on online
+            participantsCount = UserInputService.getValidIntFromUser("Please enter the number of participants: ");
         } else {
             // If location is not online, let the user select the number of participants with a max. of the max. capacity of the location
-            participantsCount = VALIDATION_SERVICE.getValidIntInRangeFromUser("Please enter the number of participants: ", 1, location.getMaxCapacity());
+            participantsCount = UserInputService.getValidIntInRangeFromUser("Please enter the number of participants: ", 1, location.getMaxCapacity());
         }
 
         // Get names of participants
         String[] participants = new String[participantsCount];
         for (int i = 0; i < participantsCount; i++) {
-            participants[i] = USER_INPUT_SERVICE.getStringFromUserWithMessage(String.format("Please enter the name of participant %d: ", i + 1));
+            participants[i] = UserInputService.getStringFromUserWithMessage(String.format("Please enter the name of participant %d: ", i + 1));
         }
 
         // Create new Event
@@ -163,7 +161,7 @@ public class EventPlanner {
 
     public void showEventsByTitle() {
         // Get the part of the title to search for
-        String searchedPhrase = USER_INPUT_SERVICE.getStringFromUserWithMessage("Please enter the name of the searched event: ");
+        String searchedPhrase = UserInputService.getStringFromUserWithMessage("Please enter the name of the searched event: ");
 
         Event[] selectedEvents = new Event[0];
         // Check for each event if the title contains the searched phrase
@@ -187,7 +185,7 @@ public class EventPlanner {
 
     public void showEventsByParticularDate() {
         // Get the date to search for
-        LocalDate searchedDate = VALIDATION_SERVICE.getValidLocalDateFromUser("Please enter the date of the searched events: (DD.MM.YYYY)");
+        LocalDate searchedDate = UserInputService.getValidLocalDateFromUser("Please enter the date of the searched events: (DD.MM.YYYY)");
 
         // Get all events on the selected day and print them
         Event[] allEvents = eventsWhileDuration(events, searchedDate.atStartOfDay(), 1, Unit.DAY);
@@ -224,6 +222,7 @@ public class EventPlanner {
         System.out.printf("%nThe least used location is \"%s\" with %d events.%n%n", leastUsedLocation.getName(), leastUsedLocationCount);
     }
 
+    //#### Helper Methods ####
     private void printEvents(Event[] eventsToPrint) {
         // Set formatting constants for printing
         final String WHITE_UNDERLINED = "\033[4m";
@@ -254,7 +253,7 @@ public class EventPlanner {
         for (int i = 0; i < locations.length; i++) {
             System.out.printf("%d: %s%n", i+1, locations[i].getName());
         }
-        int locationPlace = VALIDATION_SERVICE.getValidIntInRangeFromUser("Please enter the number of the location: ", 1, locations.length);
+        int locationPlace = UserInputService.getValidIntInRangeFromUser("Please enter the number of the location: ", 1, locations.length);
         return locations[locationPlace-1];
     }
 

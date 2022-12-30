@@ -1,6 +1,6 @@
 package classes;
 
-import helper.validation.ValidationService;
+import helper.UserInputService;
 
 public class MenuHandler {
     private final String[] MENUITEMS = {
@@ -13,12 +13,10 @@ public class MenuHandler {
             "Show the least used location",
             "Exit"
     };
-    private final ValidationService VALIDATION_SERVICE;
     private final EventPlanner EVENT_PLANNER;
 
     public MenuHandler(EventPlanner eventPlanner) {
         this.EVENT_PLANNER = eventPlanner;
-        this.VALIDATION_SERVICE = new ValidationService();
     }
 
     public void runMenu() {
@@ -55,6 +53,6 @@ public class MenuHandler {
     }
 
     private int selectMenuItem(){
-        return VALIDATION_SERVICE.getValidIntInRangeFromUser("Please select a menu item: ", 1, MENUITEMS.length);
+        return UserInputService.getValidIntInRangeFromUser("Please select a menu item: ", 1, MENUITEMS.length);
     }
 }

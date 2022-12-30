@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class OnlineEvent extends Event {
-    //Constant name convention
     private final Location LOCATION;
 
     public OnlineEvent(int ID, String title, LocalDateTime start, int length, Unit unit, String[] participants, Location location) {

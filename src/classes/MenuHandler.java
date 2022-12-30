@@ -3,7 +3,7 @@ package classes;
 import helper.UserInputService;
 
 public class MenuHandler {
-    private final String[] MENUITEMS = {
+    private final String[] MENU_ITEMS = {
             "Create new event",
             "Show a report of all events",
             "Search events by title",
@@ -47,12 +47,12 @@ public class MenuHandler {
 
     private void printMenu() {
         // Print all MenuItems
-        for (int i = 0; i < MENUITEMS.length; i++) {
-            System.out.printf("[%02d] - %s%n", i + 1, MENUITEMS[i]);
+        for (int i = 0; i < MENU_ITEMS.length; i++) {
+            System.out.printf("[%02d] - %s%n", i + 1, MENU_ITEMS[i]);
         }
     }
 
     private int selectMenuItem(){
-        return UserInputService.getValidIntInRangeFromUser("Please select a menu item: ", 1, MENUITEMS.length);
+        return UserInputService.getValidIntInRangeFromUser("Please select a menu item: ", 1, MENU_ITEMS.length);
     }
 }

@@ -48,11 +48,10 @@ public class UserInputService {
             // Remove leading zeros
             input = input.replaceFirst("^0+(?!$)", "");
 
-            String regexString = "[" + min + "-" + max + "]";
             //Check if the input is a number and in the range
             if (!input.matches("^[0-9]+$")) {
                 System.out.println("Input is not a number, please enter a number between " + min + " and " + max);
-            } else if (!input.matches(regexString)) {
+            } else if (!(min <= Integer.parseInt(input) && Integer.parseInt(input) <= max)) {
                 System.out.println("Input is not in range, please enter a number between " + min + " and " + max);
             } else {
                 return Integer.parseInt(input);

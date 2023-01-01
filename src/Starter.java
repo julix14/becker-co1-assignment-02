@@ -13,7 +13,7 @@ public class Starter {
         boolean demoDecision = UserInputService.getBooleanFromYesOrNo("Do you want to run the demo with predefined locations? (y/n): ");
 
         // If the user wants to use the demo modus, create a new EventPlanner with predefined locations and events
-        if (!demoDecision) {
+        if (demoDecision) {
             new MenuHandler(new EventPlanner()).runMenu();
         } else {
             // If the user doesn't want to use the demo modus, create a new EventPlanner without predefined locations and events

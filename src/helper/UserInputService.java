@@ -118,7 +118,7 @@ public class UserInputService {
             //To assert the input is an LocalDate, try to parse it to an LocalDate
             //If so, return the LocalDate
             //If not, print an error message and ask for input again
-            if (!input.matches("^[y,n]+$/gmi")) {
+            if (!input.matches("^[y,Y,n,N]$")) {
                 System.out.println("Please just enter y for yes or n for no");
             } else if (input.equalsIgnoreCase("y")) {
                 return true;

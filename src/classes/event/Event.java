@@ -3,12 +3,12 @@ package classes.event;
 import java.time.LocalDateTime;
 
 public abstract class Event {
-    private final int ID;
-    private String title;
-    private LocalDateTime start;
-    private int length;
-    private Unit unit;
-    private String[] participants;
+    protected final int ID;
+    protected String title;
+    protected LocalDateTime start;
+    protected int length;
+    protected Unit unit;
+    protected String[] participants;
 
     public Event(int ID, String title, LocalDateTime start, int length, Unit unit, String[] participants) {
         this.ID = ID;
@@ -41,9 +41,4 @@ public abstract class Event {
             case MONTH -> this.start.plusMonths(this.length);
         };
     }
-
-    public String[] getParticipants() {
-        return participants;
-    }
-
 }

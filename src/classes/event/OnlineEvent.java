@@ -15,7 +15,7 @@ public class OnlineEvent extends Event {
 
     public String getInformationString() {
         final DateTimeFormatter CUSTOM_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
-        return String.format("[%02d]    %-16s    %-16s    %-14s    %-14s    %-3d", this.getId(), this.getTitle(), this.LOCATION.getName(), this.getStart().format(CUSTOM_FORMAT), this.getEndOfEvent().format(CUSTOM_FORMAT), this.getParticipants().length);
+        return String.format("[%02d]    %-16s    %-16s    %-14s    %-14s    %-3d", this.ID, this.title, this.LOCATION.getName(), this.start.format(CUSTOM_FORMAT), this.getEndOfEvent().format(CUSTOM_FORMAT), this.participants.length);
     }
 
 }

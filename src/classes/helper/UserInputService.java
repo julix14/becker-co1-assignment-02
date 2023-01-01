@@ -77,7 +77,7 @@ public class UserInputService {
             try {
                 return LocalDateTime.parse(input, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
             } catch (DateTimeParseException e) {
-                System.out.println("Input is not a date");
+                System.out.println("Input is not in the right format (DD.MM.YYYY HH:mm)");
             }
             tries++;
         }while (tries < 3);
@@ -99,7 +99,7 @@ public class UserInputService {
             try {
                 return LocalDate.parse(input, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
             } catch (DateTimeParseException e) {
-                System.out.println("Input is not a date");
+                System.out.println("Input is not in the right format (DD.MM.YYYY)");
             }
             tries++;
         } while (tries < 3);

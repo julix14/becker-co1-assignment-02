@@ -59,12 +59,12 @@ public class EventPlanner {
         events = ArrayHelper.add(events, new OnlineEvent(1, "Online Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[0]));
         events = ArrayHelper.add(events, new OnlineEvent(2, "Online Event 2", LocalDateTime.of(2021, 2, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[0]));
 
-        events = ArrayHelper.add(events, new OnsiteEvent(33, "Onsite Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[1]));
+        events = ArrayHelper.add(events, new OnsiteEvent(3, "Onsite Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[1]));
 
         events = ArrayHelper.add(events, new OnsiteEvent(4, "Onsite Event 2", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.HOUR, new String[]{"John", "Jane"}, locations[2]));
         events = ArrayHelper.add(events, new OnsiteEvent(5, "Onsite Event 3", LocalDateTime.of(2021, 2, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[2]));
         events = ArrayHelper.add(events, new OnsiteEvent(6, "Onsite Event 4", LocalDateTime.of(2021, 3, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[2]));
-        eventCounter = 6;
+        eventCounter = 7;
         return locations;
     }
 
@@ -116,6 +116,7 @@ public class EventPlanner {
                     // If no other locations are free, let the user select a new date
                     System.out.println("There are no free locations on the selected date. Please select another date:");
                     startDate = UserInputService.getValidLocalDateTimeFromUser("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
+                    locationsToSelect = locations;
                 }
             }
             // Repeat until an available location is selected
@@ -128,7 +129,7 @@ public class EventPlanner {
             participantsCount = UserInputService.getValidIntFromUser("Please enter the number of participants: ");
         } else {
             // If location is not online, let the user select the number of participants with a max. of the max. capacity of the location
-            participantsCount = UserInputService.getValidIntInRangeFromUser("Please enter the number of participants: ", 1, location.getMaxCapacity());
+            participantsCount = UserInputService.getValidIntInRangeFromUser("Please enter the number of participants: (max. " + location.getMaxCapacity() + ")", 1, location.getMaxCapacity());
         }
 
         // Get names of participants
@@ -251,7 +252,11 @@ public class EventPlanner {
     private Location locationSelector(Location[] locations){
         // Print all locations from the Location array
         for (int i = 0; i < locations.length; i++) {
-            System.out.printf("%d: %s%n", i+1, locations[i].getName());
+            if (locations[i] == ONLINE_LOCATION) {
+                System.out.printf("%d. %s%n", i + 1, locations[i].getName());
+            } else {
+                System.out.printf("%d. %s (max. %d participants)%n", i + 1, locations[i].getName(), locations[i].getMaxCapacity());
+            }
         }
         int locationPlace = UserInputService.getValidIntInRangeFromUser("Please enter the number of the location: ", 1, locations.length);
         return locations[locationPlace-1];
@@ -280,7 +285,9 @@ public class EventPlanner {
                             // Check if the new event starts before the current event starts && the new event end after the current event start
                             newEventStart.isBefore(event.getStart()) && newEventEnd.isAfter(event.getEndOfEvent()) ||
                             // Check if the current event starts before the new event starts && the current event ends after the new event ends
-                            event.getStart().isBefore(newEventStart) && event.getEndOfEvent().isAfter(newEventEnd)
+                            event.getStart().isBefore(newEventStart) && event.getEndOfEvent().isAfter(newEventEnd) ||
+                            // Check if the new event starts at the same time as the new one or ends at the same time as the new one
+                            event.getStart().isEqual(newEventStart) || event.getEndOfEvent().isEqual(newEventEnd)
             ) {
                 eventsWhileDuration = ArrayHelper.add(eventsWhileDuration, event);
             }

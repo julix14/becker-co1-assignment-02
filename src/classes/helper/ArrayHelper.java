@@ -48,7 +48,7 @@ public class ArrayHelper {
         // Go through the array and add all elements that are not equal to the given object to the new array
         for (Location item : array) {
             if (!item.equals(object)) {
-                ArrayHelper.add(newArray, item);
+                newArray = ArrayHelper.add(newArray, item);
             }
         }
         return newArray;

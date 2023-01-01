@@ -19,7 +19,7 @@ public abstract class Event {
         this.participants = participants;
     }
 
-    public int getID() {
+    public int getId() {
         return ID;
     }
 
@@ -30,15 +30,6 @@ public abstract class Event {
 
     public LocalDateTime getStart() {
         return start;
-    }
-
-    public int getLength() {
-        return length;
-    }
-
-
-    public Unit getUnit() {
-        return unit;
     }
 
     public abstract String getInformationString();

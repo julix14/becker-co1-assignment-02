@@ -229,7 +229,7 @@ public class EventPlanner {
         final String RESET = "\033[0m";
 
         // Sort events by ID
-        Arrays.sort(eventsToPrint, Comparator.comparingInt(Event::getID));
+        Arrays.sort(eventsToPrint, Comparator.comparingInt(Event::getId));
 
         // Check if there are any events to print
         if (eventsToPrint.length == 0) {

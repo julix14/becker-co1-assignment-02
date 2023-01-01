@@ -108,7 +108,7 @@ public class UserInputService {
         return null;
     }
 
-    public static boolean getBooleanFromYesOrNo(String message) {
+    public static boolean getBooleanFromYesOrNoInput(String message) {
         String input;
         int tries = 0;
         do {

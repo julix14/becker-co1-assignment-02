@@ -13,7 +13,7 @@ public class OnlineEvent extends Event {
         this.LOCATION = location;
     }
 
-    public String getInformation() {
+    public String getInformationString() {
         final DateTimeFormatter CUSTOM_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
         return String.format("[%02d]    %-16s    %-16s    %-14s    %-14s    %-3d", this.getID(), this.getTitle(), this.LOCATION.getName(), this.getStart().format(CUSTOM_FORMAT), this.getEndOfEvent().format(CUSTOM_FORMAT), this.getParticipants().length);
     }

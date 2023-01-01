@@ -241,7 +241,7 @@ public class EventPlanner {
             //Print events as table
             System.out.printf(WHITE_UNDERLINED + "%-4s    %-16s    %-16s    %-14s    %-14s    %3s" + RESET, "ID", "Title", "Location", "Start", "End", "ParticipantsCount");
             for (Event event : eventsToPrint) {
-                System.out.printf("%n%s ", event.getInformation());
+                System.out.printf("%n%s ", event.getInformationString());
             }
             System.out.println("\n");
         }

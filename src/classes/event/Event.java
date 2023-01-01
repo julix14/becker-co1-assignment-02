@@ -41,7 +41,7 @@ public abstract class Event {
         return unit;
     }
 
-    public abstract String getInformation();
+    public abstract String getInformationString();
 
     public LocalDateTime getEndOfEvent() {
         return switch (this.unit) {

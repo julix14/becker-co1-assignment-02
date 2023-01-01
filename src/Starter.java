@@ -1,6 +1,6 @@
 import classes.EventPlanner;
 import classes.MenuHandler;
-import helper.UserInputService;
+import classes.helper.UserInputService;
 
 public class Starter {
 

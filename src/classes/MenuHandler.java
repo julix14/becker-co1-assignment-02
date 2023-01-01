@@ -1,6 +1,6 @@
 package classes;
 
-import helper.UserInputService;
+import classes.helper.UserInputService;
 
 public class MenuHandler {
     private final String[] MENU_ITEMS = {

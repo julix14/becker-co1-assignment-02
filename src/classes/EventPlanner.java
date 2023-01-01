@@ -4,8 +4,8 @@ import classes.event.Event;
 import classes.event.OnlineEvent;
 import classes.event.OnsiteEvent;
 import classes.event.Unit;
-import helper.ArrayHelper;
-import helper.UserInputService;
+import classes.helper.ArrayHelper;
+import classes.helper.UserInputService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

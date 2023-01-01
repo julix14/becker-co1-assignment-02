@@ -1,4 +1,4 @@
-package helper;
+package classes.helper;
 
 import classes.Location;
 

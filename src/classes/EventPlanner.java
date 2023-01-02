@@ -18,54 +18,32 @@ public class EventPlanner {
 
     private int eventCounter;
 
-    private Event[] events = new Event[0];
+    private Event[] events;
     private final Location ONLINE_LOCATION;
 
-    // Primary constructor
+    // Constructor
     public EventPlanner(int locationCount) {
         eventCounter = 0;
+
         ONLINE_LOCATION = new Location("Online", -1);
+
+        events = new Event[0];
 
         locations = setupLocations(locationCount + 1);
     }
 
-    //Second constructor for testing purposes
-    public EventPlanner() {
-        eventCounter = 0;
-        ONLINE_LOCATION = new Location("Online", -1);
-        locations = demoLocations();
-    }
 
     // Setup locations for the event planner
     private Location[] setupLocations(int locationCount) {
         System.out.printf("%nPlease enter the name and max capacity of %d locations:", locationCount - 1);
         this.locations = new Location[locationCount];
+
         for (int i = 0; i < locationCount - 1; i++) {
             String name = UserInputService.getStringFromUserWithMessage(String.format("%nPlease enter the name of location %d: ", i + 1));
             int maxCapacity = UserInputService.getValidIntFromUser(String.format("Please enter the max. capacity of %s: ", name));
             locations[i] = new Location(name, maxCapacity);
         }
         locations[locationCount - 1] = ONLINE_LOCATION;
-        return locations;
-    }
-
-    // Setup demo locations for the event planner
-    // Just for testing purposes
-    private Location[] demoLocations() {
-        Location[] locations = new Location[3];
-        locations[0] = ONLINE_LOCATION;
-        locations[1] = new Location("Room 1", 10);
-        locations[2] = new Location("Room 2", 20);
-
-        events = ArrayHelper.add(events, new OnlineEvent(1, "Online Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 3.4, Unit.DAY, new String[]{"John", "Jane"}, locations[0]));
-        events = ArrayHelper.add(events, new OnlineEvent(2, "Online Event 2", LocalDateTime.of(2021, 2, 1, 10, 0), 1.2, Unit.HOUR, new String[]{"John", "Jane"}, locations[0]));
-
-        events = ArrayHelper.add(events, new OnsiteEvent(3, "Onsite Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1.6, Unit.DAY, new String[]{"John", "Jane"}, locations[1]));
-
-        events = ArrayHelper.add(events, new OnsiteEvent(4, "Onsite Event 2", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.HOUR, new String[]{"John", "Jane"}, locations[2]));
-        events = ArrayHelper.add(events, new OnsiteEvent(5, "Onsite Event 3", LocalDateTime.of(2021, 2, 1, 10, 0), 1.2, Unit.MONTH, new String[]{"John", "Jane"}, locations[2]));
-        events = ArrayHelper.add(events, new OnsiteEvent(6, "Onsite Event 4", LocalDateTime.of(2021, 3, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[2]));
-        eventCounter = 7;
         return locations;
     }
 
@@ -231,7 +209,6 @@ public class EventPlanner {
         final String RESET = "\033[0m";
         final DateTimeFormatter CUSTOM_DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
 
-
         // Set index constants for information Array
         final int ID_INDEX = 0;
         final int TITLE_INDEX = 1;
@@ -274,28 +251,32 @@ public class EventPlanner {
                 System.out.printf("%d. %s (max. %d participants)%n", i + 1, locations[i].getName(), locations[i].getMaxCapacity());
             }
         }
+
         int locationPlace = UserInputService.getValidIntInRangeFromUser("Please enter the number of the location: ", 1, locations.length);
         return locations[locationPlace - 1];
     }
 
 
     public LocalDateTime calculateEndOfEvent(LocalDateTime start, Unit unit, double length) {
-        int MINUTES_IN_HOUR = 60;
         int HOURS_PER_DAY = 24;
         double DAYS_PER_MONTH = 30.417;
 
 
         LocalDateTime end = start;
         // Calculate the end of the event based on the start date, the unit and the length
+        // Round the hours to the next biggest integer to avoid event collisions
         double afterComma = length - (int) length;
         switch (unit) {
-            case HOUR -> {
-                end = start.plusHours((int) Math.ceil(length));
-            }
+            // If Unit equals Hours, add hours and round them to the next bigger integer
+            case HOUR -> end = start.plusHours((int) Math.ceil(length));
+            // If Unit equals Day, firstly add the full days (value in front of the comma)
+            // After this add the partial days as hours
             case DAY -> {
                 end = start.plusDays((int) length);
                 end = end.plusHours((int) (afterComma * HOURS_PER_DAY));
             }
+            // // If Unit equals Month, firstly add the full months (value in front of the comma)
+            // After this add the partial months as days, and partial days as hours
             case MONTH -> {
                 end = start.plusMonths((int) length);
                 end = end.plusDays((int) (afterComma * DAYS_PER_MONTH));
@@ -310,6 +291,7 @@ public class EventPlanner {
     private Event[] eventsWhileDuration(Event[] events, LocalDateTime newEventStart, double length, Unit unit) {
         LocalDateTime newEventEnd = calculateEndOfEvent(newEventStart, unit, length);
         Event[] eventsWhileDuration = new Event[0];
+
         // Go through all events and check if the event is during the calculated duration
         for (Event event : events) {
             if (

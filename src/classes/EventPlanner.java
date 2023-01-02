@@ -284,31 +284,26 @@ public class EventPlanner {
         int HOURS_PER_DAY = 24;
         double DAYS_PER_MONTH = 30.417;
 
+
         LocalDateTime end = start;
         // Calculate the end of the event based on the start date, the unit and the length
-        if (length % 1 == 0) {
-            switch (unit) {
-                case HOUR -> end = start.plusHours((int) length);
-                case DAY -> end = start.plusDays((int) length);
-                case MONTH -> end = start.plusMonths((int) length);
+        double afterComma = length - (int) length;
+        switch (unit) {
+            case HOUR -> {
+                end = start.plusHours((int) Math.ceil(length));
             }
-        } else {
-            double afterComma = length - (int) length;
-            switch (unit) {
-                case HOUR -> {
-                    end = start.plusHours((int) Math.ceil(length));
-                    end = end.plusMinutes((int) (afterComma * MINUTES_IN_HOUR));
-                }
-                case DAY -> {
-                    end = start.plusDays((int) length);
-                    end = end.plusHours((int) (afterComma * HOURS_PER_DAY));
-                }
-                case MONTH -> {
-                    end = start.plusMonths((int) length);
-                    end = end.plusDays((int) (afterComma * DAYS_PER_MONTH));
-                }
+            case DAY -> {
+                end = start.plusDays((int) length);
+                end = end.plusHours((int) (afterComma * HOURS_PER_DAY));
+            }
+            case MONTH -> {
+                end = start.plusMonths((int) length);
+                end = end.plusDays((int) (afterComma * DAYS_PER_MONTH));
+                afterComma = (afterComma * DAYS_PER_MONTH) - ((int) (afterComma * DAYS_PER_MONTH));
+                end = end.plusHours((int) (afterComma * HOURS_PER_DAY));
             }
         }
+
         return end;
     }
 

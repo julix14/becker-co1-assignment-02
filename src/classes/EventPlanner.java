@@ -280,30 +280,36 @@ public class EventPlanner {
 
 
     public LocalDateTime calculateEndOfEvent(LocalDateTime start, Unit unit, double length) {
+        int MINUTES_IN_HOUR = 60;
         int HOURS_PER_DAY = 24;
         double DAYS_PER_MONTH = 30.417;
+
+        LocalDateTime end = start;
         // Calculate the end of the event based on the start date, the unit and the length
         if (length % 1 == 0) {
             switch (unit) {
-                case HOUR -> start = start.plusHours((int) length);
-                case DAY -> start = start.plusDays((int) length);
-                case MONTH -> start = start.plusMonths((int) length);
+                case HOUR -> end = start.plusHours((int) length);
+                case DAY -> end = start.plusDays((int) length);
+                case MONTH -> end = start.plusMonths((int) length);
             }
         } else {
             double afterComma = length - (int) length;
             switch (unit) {
-                case HOUR -> start = start.plusHours((int) Math.ceil(length));
+                case HOUR -> {
+                    end = start.plusHours((int) Math.ceil(length));
+                    end = end.plusMinutes((int) (afterComma * MINUTES_IN_HOUR));
+                }
                 case DAY -> {
-                    start = start.plusDays((int) length);
-                    start = start.plusHours((int) (afterComma * HOURS_PER_DAY));
+                    end = start.plusDays((int) length);
+                    end = end.plusHours((int) (afterComma * HOURS_PER_DAY));
                 }
                 case MONTH -> {
-                    start = start.plusMonths((int) length);
-                    start = start.plusDays((int) (afterComma * DAYS_PER_MONTH));
+                    end = start.plusMonths((int) length);
+                    end = end.plusDays((int) (afterComma * DAYS_PER_MONTH));
                 }
             }
         }
-        return start;
+        return end;
     }
 
     private Event[] eventsWhileDuration(Event[] events, LocalDateTime newEventStart, double length, Unit unit) {

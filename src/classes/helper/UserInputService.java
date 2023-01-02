@@ -32,11 +32,34 @@ public class UserInputService {
                 System.out.println("Input is not a number");
             }
             tries++;
-        }while (tries < 3);
+        } while (tries < 3);
         System.out.println("You have entered an invalid input 3 times. Exiting the program");
         System.exit(1);
         return -1;
     }
+
+    public static double getValidDoubleFromUser(String message) {
+        String input;
+        int tries = 0;
+        do {
+            //Get a String Input from the user
+            input = getStringFromUserWithMessage(message);
+
+            //To assert the input is an Integer, try to parse it to an Integer
+            //If so, return the Integer
+            //If not, print an error message and ask for input again
+            try {
+                return Double.parseDouble(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Input is not a number");
+            }
+            tries++;
+        } while (tries < 3);
+        System.out.println("You have entered an invalid input 3 times. Exiting the program");
+        System.exit(1);
+        return -1;
+    }
+
 
     public static int getValidIntInRangeFromUser(String message, int min, int max) {
         String input;

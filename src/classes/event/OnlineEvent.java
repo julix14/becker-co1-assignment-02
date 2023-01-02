@@ -8,14 +8,14 @@ import java.time.format.DateTimeFormatter;
 public class OnlineEvent extends Event {
     private final Location LOCATION;
 
-    public OnlineEvent(int ID, String title, LocalDateTime start, int length, Unit unit, String[] participants, Location location) {
+    public OnlineEvent(int ID, String title, LocalDateTime start, double length, Unit unit, String[] participants, Location location) {
         super(ID, title, start, length, unit, participants);
         this.LOCATION = location;
     }
 
     public String getInformationString() {
         final DateTimeFormatter CUSTOM_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
-        return String.format("[%02d]    %-16s    %-16s    %-14s    %-14s    %-3d", this.ID, this.title, this.LOCATION.getName(), this.start.format(CUSTOM_FORMAT), this.getEndOfEvent().format(CUSTOM_FORMAT), this.participants.length);
+        return String.format("[%02d]    %-16s    %-16s    %-14s    %-6.2f    %-5s    %-3d", this.ID, this.title, this.LOCATION.getName(), this.start.format(CUSTOM_FORMAT), length, unit, this.participants.length);
     }
 
 }

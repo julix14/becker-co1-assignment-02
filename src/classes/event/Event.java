@@ -6,11 +6,11 @@ public abstract class Event {
     protected final int ID;
     protected String title;
     protected LocalDateTime start;
-    protected int length;
+    protected double length;
     protected Unit unit;
     protected String[] participants;
 
-    public Event(int ID, String title, LocalDateTime start, int length, Unit unit, String[] participants) {
+    public Event(int ID, String title, LocalDateTime start, double length, Unit unit, String[] participants) {
         this.ID = ID;
         this.title = title;
         this.start = start;
@@ -32,13 +32,13 @@ public abstract class Event {
         return start;
     }
 
-    public abstract String getInformationString();
-
-    public LocalDateTime getEndOfEvent() {
-        return switch (this.unit) {
-            case HOUR -> this.start.plusHours(this.length);
-            case DAY -> this.start.plusDays(this.length);
-            case MONTH -> this.start.plusMonths(this.length);
-        };
+    public double getLength() {
+        return length;
     }
+
+    public Unit getUnit() {
+        return unit;
+    }
+
+    public abstract String getInformationString();
 }

@@ -79,7 +79,7 @@ public class EventPlanner {
         LocalDateTime startDate = UserInputService.getValidLocalDateTimeFromUser("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
 
         // Get length of new Event
-        int length = UserInputService.getValidIntFromUser("Please enter the length of the event: ");
+        double length = UserInputService.getValidDoubleFromUser("Please enter the length of the event: ");
 
         // Get TimeUnit of new Event
         int timeUnitPlace = UserInputService.getValidIntInRangeFromUser("Please enter the time unit of the event: (1 = Hours, 2 = Days, 3 = Months)", 1, 3);
@@ -240,7 +240,7 @@ public class EventPlanner {
             System.out.printf("%d Events found:%n", eventsToPrint.length);
 
             //Print events as table
-            System.out.printf(WHITE_UNDERLINED + "%-4s    %-16s    %-16s    %-14s    %-14s    %3s" + RESET, "ID", "Title", "Location", "Start", "End", "ParticipantsCount");
+            System.out.printf(WHITE_UNDERLINED + "%-4s    %-16s    %-16s    %-14s    %-6s    %-5s    %3s" + RESET, "ID", "Title", "Location", "Start", "Length", "Unit", "ParticipantsCount");
             for (Event event : eventsToPrint) {
                 System.out.printf("%n%s ", event.getInformationString());
             }
@@ -259,35 +259,53 @@ public class EventPlanner {
             }
         }
         int locationPlace = UserInputService.getValidIntInRangeFromUser("Please enter the number of the location: ", 1, locations.length);
-        return locations[locationPlace-1];
+        return locations[locationPlace - 1];
     }
 
 
-    private LocalDateTime calculateEndOfEvent(LocalDateTime start, Unit unit, int length) {
+    public LocalDateTime calculateEndOfEvent(LocalDateTime start, Unit unit, double length) {
+        int HOURS_PER_DAY = 24;
+        int DAYS_PER_MONTH = 30;
         // Calculate the end of the event based on the start date, the unit and the length
-        return switch (unit) {
-            case HOUR -> start.plusHours(length);
-            case DAY -> start.plusDays(length);
-            case MONTH -> start.plusMonths(length);
-        };
+        if (length % 1 == 0) {
+            switch (unit) {
+                case HOUR -> start = start.plusHours((int) length);
+                case DAY -> start = start.plusDays((int) length);
+                case MONTH -> start = start.plusMonths((int) length);
+            }
+        } else {
+            double afterComma = length - (int) length;
+            switch (unit) {
+                case HOUR -> start = start.plusHours((int) Math.ceil(length));
+                case DAY -> {
+                    start = start.plusDays((int) length);
+                    start = start.plusHours((int) (afterComma * HOURS_PER_DAY));
+                }
+                case MONTH -> {
+                    start = start.plusMonths((int) length);
+                    start = start.plusDays((int) (afterComma * DAYS_PER_MONTH));
+                }
+            }
+        }
+        return start;
     }
 
-    private Event[] eventsWhileDuration(Event[] events, LocalDateTime newEventStart, int length, Unit unit) {
+    private Event[] eventsWhileDuration(Event[] events, LocalDateTime newEventStart, double length, Unit unit) {
         LocalDateTime newEventEnd = calculateEndOfEvent(newEventStart, unit, length);
         Event[] eventsWhileDuration = new Event[0];
         // Go through all events and check if the event is during the calculated duration
         for (Event event : events) {
             if (
                 // Check if the current event starts before the new event starts && the current event ends after the new event starts
-                    event.getStart().isBefore(newEventStart) && event.getEndOfEvent().isAfter(newEventStart) ||
+                    event.getStart().isBefore(newEventStart) && calculateEndOfEvent(event.getStart(), event.getUnit(), event.getLength()).isAfter(newEventStart) ||
                             // Check if the current event starts before the new event ends && the current event ends after the new event ends
-                            event.getStart().isBefore(newEventEnd) && event.getEndOfEvent().isAfter(newEventEnd) ||
+                            event.getStart().isBefore(newEventEnd) && calculateEndOfEvent(event.getStart(), event.getUnit(), event.getLength()).isAfter(newEventEnd) ||
                             // Check if the new event starts before the current event starts && the new event end after the current event start
-                            newEventStart.isBefore(event.getStart()) && newEventEnd.isAfter(event.getEndOfEvent()) ||
+                            newEventStart.isBefore(event.getStart()) && newEventEnd.isAfter(calculateEndOfEvent(event.getStart(), event.getUnit(), event.getLength())) ||
                             // Check if the current event starts before the new event starts && the current event ends after the new event ends
-                            event.getStart().isBefore(newEventStart) && event.getEndOfEvent().isAfter(newEventEnd) ||
+                            event.getStart().isBefore(newEventStart) && calculateEndOfEvent(event.getStart(), event.getUnit(), event.getLength()).isAfter(newEventEnd) ||
                             // Check if the new event starts at the same time as the new one or ends at the same time as the new one
-                            event.getStart().isEqual(newEventStart) || event.getEndOfEvent().isEqual(newEventEnd)
+                            event.getStart().isEqual(newEventStart) || calculateEndOfEvent(event.getStart(), event.getUnit(), event.getLength()).isEqual(newEventEnd)
             ) {
                 eventsWhileDuration = ArrayHelper.add(eventsWhileDuration, event);
             }
@@ -295,7 +313,7 @@ public class EventPlanner {
         return eventsWhileDuration;
     }
 
-    private Location[] getFreeLocationsOnDate(LocalDateTime startDate, int length, Unit unit) {
+    private Location[] getFreeLocationsOnDate(LocalDateTime startDate, double length, Unit unit) {
         Location[] freeLocations = new Location[0];
         // Go through all locations
         // Get all events on the location

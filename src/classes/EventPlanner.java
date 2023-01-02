@@ -9,6 +9,7 @@ import classes.helper.UserInputService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -228,6 +229,17 @@ public class EventPlanner {
         // Set formatting constants for printing
         final String WHITE_UNDERLINED = "\033[4m";
         final String RESET = "\033[0m";
+        final DateTimeFormatter CUSTOM_DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
+
+
+        // Set index constants for information Array
+        final int ID_INDEX = 0;
+        final int TITLE_INDEX = 1;
+        final int LOCATION_INDEX = 2;
+        final int START_DATE_INDEX = 3;
+        final int LENGTH_INDEX = 4;
+        final int UNIT_INDEX = 5;
+        final int PARTICIPANTS_COUNT_INDEX = 6;
 
         // Sort events by ID
         Arrays.sort(eventsToPrint, Comparator.comparingInt(Event::getId));
@@ -240,9 +252,13 @@ public class EventPlanner {
             System.out.printf("%d Events found:%n", eventsToPrint.length);
 
             //Print events as table
-            System.out.printf(WHITE_UNDERLINED + "%-4s    %-16s    %-16s    %-14s    %-6s    %-5s    %3s" + RESET, "ID", "Title", "Location", "Start", "Length", "Unit", "ParticipantsCount");
+            System.out.printf(WHITE_UNDERLINED + "%-4s    %-16s    %-16s    %-14s    %-6s    %-5s    %-14s    %3s" + RESET, "ID", "Title", "Location", "Start-Time", "Length", "Unit", "End-Time", "ParticipantsCount");
             for (Event event : eventsToPrint) {
-                System.out.printf("%n%s ", event.getInformationString());
+                String[] infoArray = event.getInformationArray();
+                LocalDateTime endDate = calculateEndOfEvent(event.getStart(), event.getUnit(), event.getLength());
+
+                System.out.printf("%n[%2s]    %-16s    %-16s    %-14s    %-6s    %-5s    %-14s    %-3s", infoArray[ID_INDEX], infoArray[TITLE_INDEX], infoArray[LOCATION_INDEX], infoArray[START_DATE_INDEX], infoArray[LENGTH_INDEX], infoArray[UNIT_INDEX], endDate.format(CUSTOM_DATE_FORMAT), infoArray[PARTICIPANTS_COUNT_INDEX]);
+
             }
             System.out.println("\n");
         }

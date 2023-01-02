@@ -14,9 +14,9 @@ public class OnsiteEvent extends Event {
         this.location = location;
     }
 
-    public String getInformationString() {
-        final DateTimeFormatter CUSTOM_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
-        return String.format("[%02d]    %-16s    %-16s    %-14s    %-6.2f    %-5s    %-3d", this.ID, this.title, this.location.getName(), this.start.format(CUSTOM_FORMAT), length, unit, this.participants.length);
+    public String[] getInformationArray() {
+        final DateTimeFormatter CUSTOM_DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
+        return new String[]{String.format("%02d", this.ID), this.title, this.location.getName(), this.start.format(CUSTOM_DATE_FORMAT), String.format("%-6.2f", length), String.valueOf(unit), String.valueOf(this.participants.length)};
     }
 
     public Location getLocation() {

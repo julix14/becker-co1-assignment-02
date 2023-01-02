@@ -40,5 +40,5 @@ public abstract class Event {
         return unit;
     }
 
-    public abstract String getInformationString();
+    public abstract String[] getInformationArray();
 }

@@ -57,13 +57,13 @@ public class EventPlanner {
         locations[1] = new Location("Room 1", 10);
         locations[2] = new Location("Room 2", 20);
 
-        events = ArrayHelper.add(events, new OnlineEvent(1, "Online Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[0]));
-        events = ArrayHelper.add(events, new OnlineEvent(2, "Online Event 2", LocalDateTime.of(2021, 2, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[0]));
+        events = ArrayHelper.add(events, new OnlineEvent(1, "Online Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 3.4, Unit.DAY, new String[]{"John", "Jane"}, locations[0]));
+        events = ArrayHelper.add(events, new OnlineEvent(2, "Online Event 2", LocalDateTime.of(2021, 2, 1, 10, 0), 1.2, Unit.HOUR, new String[]{"John", "Jane"}, locations[0]));
 
-        events = ArrayHelper.add(events, new OnsiteEvent(3, "Onsite Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[1]));
+        events = ArrayHelper.add(events, new OnsiteEvent(3, "Onsite Event 1", LocalDateTime.of(2021, 1, 1, 10, 0), 1.6, Unit.DAY, new String[]{"John", "Jane"}, locations[1]));
 
         events = ArrayHelper.add(events, new OnsiteEvent(4, "Onsite Event 2", LocalDateTime.of(2021, 1, 1, 10, 0), 1, Unit.HOUR, new String[]{"John", "Jane"}, locations[2]));
-        events = ArrayHelper.add(events, new OnsiteEvent(5, "Onsite Event 3", LocalDateTime.of(2021, 2, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[2]));
+        events = ArrayHelper.add(events, new OnsiteEvent(5, "Onsite Event 3", LocalDateTime.of(2021, 2, 1, 10, 0), 1.2, Unit.MONTH, new String[]{"John", "Jane"}, locations[2]));
         events = ArrayHelper.add(events, new OnsiteEvent(6, "Onsite Event 4", LocalDateTime.of(2021, 3, 1, 10, 0), 1, Unit.DAY, new String[]{"John", "Jane"}, locations[2]));
         eventCounter = 7;
         return locations;
@@ -281,7 +281,7 @@ public class EventPlanner {
 
     public LocalDateTime calculateEndOfEvent(LocalDateTime start, Unit unit, double length) {
         int HOURS_PER_DAY = 24;
-        int DAYS_PER_MONTH = 30;
+        double DAYS_PER_MONTH = 30.417;
         // Calculate the end of the event based on the start date, the unit and the length
         if (length % 1 == 0) {
             switch (unit) {

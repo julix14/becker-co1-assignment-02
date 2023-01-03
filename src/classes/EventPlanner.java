@@ -64,42 +64,41 @@ public class EventPlanner {
         int timeUnitPlace = UserInputService.getValidIntInRangeFromUser("Please enter the time unit of the event: (1 = Hours, 2 = Days, 3 = Months)", 1, 3);
         Unit unit = Unit.values()[timeUnitPlace - 1];
 
-        // Select Location of new Event
-        boolean locationAvailable;
-        Location location;
-        Location[] locationsToSelect = locations;
+        boolean isOnline = UserInputService.getBooleanFromYesOrNoInput("Is the event online? (y/n)");
+        Location location = null;
+        boolean isLocationAvailable = false;
+        if (isOnline) {
+            location = ONLINE_LOCATION;
+            isLocationAvailable = true;
+        }
 
-        // Check if location is free
-        // If not, check if other locations are free
-        // If this is not the case too, let the user select new start date
-        do {
-            System.out.println("Please select the location of the event:");
-            location = locationSelector(locationsToSelect);
+        while (!isLocationAvailable) {
+            // Check which locations are available
+            Location[] availableLocations = getFreeLocationsOnDate(startDate, length, unit);
+            availableLocations = ArrayHelper.remove(availableLocations, ONLINE_LOCATION);
 
-            // Check if location is online
-            if (location == ONLINE_LOCATION) {
-                locationAvailable = true;
+            // Check if there are any locations available for the chosen date
+            if (availableLocations.length != 0) {
+                // Print available locations and let the user select one of it
+                System.out.println("Select a location from the available locations:");
+                location = locationSelector(availableLocations);
+                isLocationAvailable = true;
             } else {
-                // If Location is not online, check if it is free
-                Event[] eventsOnLocation = getEventsForOneLocation(events, location);
-                locationAvailable = eventsWhileDuration(eventsOnLocation, startDate, length, unit).length == 0;
-            }
-            // If location is not free, check if other locations are free
-            if (!locationAvailable) {
-                locationsToSelect = getFreeLocationsOnDate(startDate, length, unit);
-
-                // If other locations are free, let the user select a new location
-                if (ArrayHelper.remove(locationsToSelect, ONLINE_LOCATION).length != 0) {
-                    System.out.println("The selected location is not available on the selected date. Please select another location:");
-                } else {
-                    // If no other locations are free, let the user select a new date
-                    System.out.println("There are no free locations on the selected date. Please select another date:");
-                    startDate = UserInputService.getValidLocalDateTimeFromUser("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
-                    locationsToSelect = locations;
+                // If no location available, ask the user if he wants to transform it into an online event
+                System.out.println("There are no locations available on this date.");
+                isOnline = UserInputService.getBooleanFromYesOrNoInput("Want to transform to online event, else you have to chose a new date? (y/n)");
+                if (isOnline) {
+                    location = ONLINE_LOCATION;
+                    isLocationAvailable = true;
+                    continue;
                 }
+                // If he don't want to transform it, ask him for a new date
+                System.out.println("Then you have to enter a new starting date.");
+                startDate = UserInputService.getValidLocalDateTimeFromUser("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
             }
-            // Repeat until an available location is selected
-        } while (!locationAvailable);
+
+        }
+
 
         // Get number of participants
         int participantsCount;
@@ -229,7 +228,7 @@ public class EventPlanner {
             System.out.printf("%d Events found:%n", eventsToPrint.length);
 
             //Print events as table
-            System.out.printf(WHITE_UNDERLINED + "%-4s    %-16s    %-16s    %-14s    %-6s    %-5s    %-14s    %3s" + RESET, "ID", "Title", "Location", "Start-Time", "Length", "Unit", "End-Time", "ParticipantsCount");
+            System.out.printf(WHITE_UNDERLINED + "%-4s    %-16s    %-16s    %-14s    %-6s    %-5s    %-14s    %3s" + RESET, "ID", "Title", "Location", "Start-Time", "Length", "Unit", "End-Time", "Participants");
             for (Event event : eventsToPrint) {
                 String[] infoArray = event.getInformationArray();
                 LocalDateTime endDate = calculateEndOfEvent(event.getStart(), event.getUnit(), event.getLength());

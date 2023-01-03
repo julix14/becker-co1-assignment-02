@@ -92,7 +92,7 @@ public class EventPlanner {
                     isLocationAvailable = true;
                     continue;
                 }
-                // If he don't want to transform it, ask him for a new date
+                // If the user don't want to transform it, ask him for a new date
                 System.out.println("Then you have to enter a new starting date.");
                 startDate = UserInputService.getValidLocalDateTimeFromUser("Please enter the start date of the event: (DD.MM.YYYY HH:mm)");
             }
